@@ -115,7 +115,8 @@ pt_points<-function(iso = TRUE, # isogroup compatibility
     left_join(xmatch(dA = dA, dB = dB, dDR = dDR,
                      df.abs = df.abs)) %>%
     rowwise() %>% 
-    mutate(compBlood=compABO(iso = iso, dABO = dABO, cABO = bg),
+    mutate(donor_age = dage,
+           compBlood=compABO(iso = iso, dABO = dABO, cABO = bg),
            pointsHLA = pt_mmHLA(dA = dA, dB = dB, dDR = dDR,
                                 cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2),
                                 itemA = itemA,
@@ -124,11 +125,25 @@ pt_points<-function(iso = TRUE, # isogroup compatibility
                                 itemD = itemD,
                                 itemE = itemE
            ),
+           mmA = mmHLA(dA = dA, dB = dB, dDR = dDR,
+                         cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmA"],
+           mmB = mmHLA(dA = dA, dB = dB, dDR = dDR,
+                         cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmB"],
+           mmDR = mmHLA(dA = dA, dB = dB, dDR = dDR,
+                         cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmDR"],
            pointsPRA = pt_PRA(pra80 = pra80, pra50 = pra50, cPRA),
            pointsDial = pt_dial(month = month, dialysis),
            pointsAge = pt_age(dage = dage, cage = age, points = points),
            pointsPT = pointsHLA + pointsPRA + pointsDial + pointsAge) %>% 
-    filter(compBlood == TRUE & xmatch == FALSE) %>% 
-    arrange(desc(pointsPT))
+    filter(compBlood == TRUE & (xm == FALSE | is.na(xm))) %>% 
+    arrange(desc(pointsPT)) %>% 
+    slice(1:2) %>% 
+    select(ID, bg, 
+           A1, A2, B1, B2, DR1, DR2, 
+           mmA, mmB, mmDR, 
+           age, donor_age, dialysis, cPRA,
+           pointsPT)
   
 }
+
+

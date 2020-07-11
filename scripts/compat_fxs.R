@@ -2,7 +2,7 @@
 
 # ABO compatibility
 
-compABO<-function(iso = F, # isogroup TRUE/FALSE
+compABO<-function(iso = T, # isogroup TRUE/FALSE
                  dABO = "A", # donor group options ("A", "B", "AB", "O"),
                  cABO = "A") {   # candidate group options ("A", "B", "AB", "O"))
 
@@ -39,8 +39,8 @@ mmHLA<-function(dA = c("01","02"), # donor's HLA-A typing
                 cDR = c("04","06")){ # candidate's HLA-DR typing
   
   mmA = NULL
-  mmB = 0
-  mmDR = 0
+  mmB = NULL
+  mmDR = NULL
   
   # verify function parameters
   if(!is.character(dA)){stop("donor's HLA-A typing is not valid!\n")}
@@ -95,9 +95,9 @@ xmatch<-function(dA = c("01","02"), # donor's HLA-A typing
                        res = is.element(df.abs$abs, hla)
   )) %>% 
     group_by(ID) %>% 
-    mutate(xmatch = if_else(sum(res)>0, TRUE, FALSE)) %>% 
+    mutate(xm = if_else(sum(res)>0, TRUE, FALSE)) %>% 
     ungroup() %>% 
-    distinct(ID,xmatch)
+    distinct(ID,xm)
   
   return(x)
 }
