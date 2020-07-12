@@ -10,7 +10,7 @@ pt_age<-function(dage = 60, # donor's age
     stop("donor's age is not valid!\n")}
   if(!is.numeric(cage) | cage < 18 | cage > 99){
     stop("candidate's age is not valid!\n")}
-  if(!is.numeric(points) | points < 1 | points > 9){
+  if(!is.numeric(points) | points < 1 | points > 20){
     stop("age points are not valid!\n")}
   
   pts<-ifelse((dage > 60 & cage < 55) | (dage < 40 & cage > 55), 0, points)
