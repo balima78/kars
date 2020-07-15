@@ -128,15 +128,8 @@ fluidPage(theme = shinytheme("spacelab"),
                      ),
                      
                      tabPanel("Lima", icon = icon("file-medical-alt"),
-                              numericInput(inputId = "n",
-                                           "Sample size", value = 25),
-                              plotOutput(outputId = "hist"),
                               
-                              fileInput('datafile', 'Choose CSV file',
-                                        accept=c('csv', 'comma-separated-values','.csv')),
-                              tableOutput('table'),
-                              hr(),
-                              tableOutput('table2')
+                              tableOutput('res_pt')
                      ),
                      
                      tabPanel("UK transplant", icon = icon("user-md"),

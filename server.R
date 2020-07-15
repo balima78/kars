@@ -9,8 +9,52 @@ library(tidyverse)
 library(openxlsx)
 
 function(input, output) {
-
+  
+  # read candidates' file
+  datasetCands <- reactive({
+    
+    file_cands <- input$file_cand
+    
+    if (is.null(file_cands))
+      return(NULL)
+    
+    read.csv2(file_cands$datapath) %>% 
+      mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character) %>% 
+      mutate_at(vars(ID), as.numeric)
+    
+  })
+  
+  # read donors' file 
+  datasetDonors <- reactive({
+    
+    file_donors <- input$file_donor
+    
+    if (is.null(file_donors))
+      return(NULL)
+    
+    read.csv2(file_donors$datapath) %>% 
+      mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character) %>% 
+      mutate_at(vars(ID,age), as.numeric)
+    
+  })
+  
+  # read candidates' antibodies' file
+  datasetAbs <- reactive({
+    
+    file_abss <- input$file_abs
+    
+    if (is.null(file_abss))
+      return(NULL)
+    
+    read.csv2(file_abss$datapath) %>% 
+      mutate_at(vars(ID), as.numeric)
+    
+  })
+  
+## for pair of candidates selected according to unique donor 
   output$res1 <- renderDataTable({
+    
+    candidates<-datasetCands()
     
       dt<-pt_points(iso = input$iso, # isogroup compatibility
                   dABO = input$dabo, # donor's blood group
@@ -28,15 +72,19 @@ function(input, output) {
                   itemC = as.numeric(input$c), # points for C) on PT points table
                   itemD = as.numeric(input$d), # points for D) on PT points table
                   itemE = as.numeric(input$e), # points for E) on PT points table
-                  df.abs = abs)
+                  df.abs = datasetAbs())
 
     as.data.frame(dt)
   })
   
   datasetInput <- reactive({
     
+    donors<-datasetDonors()
+    
+    abs<-datasetAbs()
+    
     # add a column to candidates' file to update respective donors
-    candidatesN<-candidates %>% mutate(donor = 0)
+    candidatesN<-datasetCands() %>% mutate(donor = 0)
     
     # create a list with the same length of the number of donors
     res <- vector("list", length = dim(donors)[1])
@@ -77,7 +125,7 @@ function(input, output) {
   
   output$resm <- renderDataTable({ 
     datasetInput()
-    })
+  })
   
   # Downloadable csv of selected dataset ----
   output$downloadData <- downloadHandler(
@@ -91,45 +139,9 @@ function(input, output) {
   
   
   ######################### testes para apagar no tab LIMA#######################
-  dataframe<-reactive({
-    if (is.null(input$datafile))
-      return(NULL)                
-    data<-read.csv2(input$datafile$datapath)
-    data
-  })
-  output$table <- renderTable({
-    head(dataframe())
-  })
-  
-  output$table2 <- renderTable({
-    
-    req(input$file_cand)
-    
-    data<-read.csv2(input$file_cand$datapath)
-
-      dt<-pt_points(iso = input$iso, # isogroup compatibility
-                  dABO = input$dabo, # donor's blood group
-                  dA = c(input$a1,input$a2),
-                  dB = c(input$b1,input$b2),
-                  dDR = c(input$dr1,input$dr2),
-                  dage = input$dage, # donor's age
-                  cdata = dataframe(), # data file with candidates
-                  pra80 = as.numeric(input$pra8), # points for a PRA equal or higher than 80%
-                  pra50 = as.numeric(input$pra5), # points for a PRA equal or higher than 50%
-                  month = input$dialysis, # points for each month on dialysis
-                  points = input$age_dif, # points for age difference in PT punctuation table
-                  itemA = as.numeric(input$a), # points for A) on PT points table
-                  itemB = as.numeric(input$b), # points for B) on PT points table
-                  itemC = as.numeric(input$c), # points for C) on PT points table
-                  itemD = as.numeric(input$d), # points for D) on PT points table
-                  itemE = as.numeric(input$e), # points for E) on PT points table
-                  df.abs = abs)
-
-    as.data.frame(dt)
-  })
   
   
-  output$hist <- renderPlot({
-    hist(rnorm(input$n))
-  })
+  
+  
+  
 }

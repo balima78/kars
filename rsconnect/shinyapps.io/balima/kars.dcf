@@ -1,0 +1,10 @@
+name: kars
+title:
+username:
+account: balima
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2575268
+bundleId: 3396060
+url: https://balima.shinyapps.io/kars/
+when: 1594831325.79771
