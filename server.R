@@ -74,7 +74,7 @@ function(input, output) {
                   itemE = as.numeric(input$e), # points for E) on PT points table
                   df.abs = datasetAbs())
 
-    as.data.frame(dt)
+    datatable(dt, options = list(pageLength = 5, dom = 'tip'))
   })
   
   datasetInput <- reactive({
