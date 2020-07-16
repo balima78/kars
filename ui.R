@@ -128,8 +128,29 @@ fluidPage(theme = shinytheme("spacelab"),
                      ),
                      
                      tabPanel("Lima", icon = icon("file-medical-alt"),
-                              
-                              tableOutput('res_pt')
+                              sidebarPanel(
+                                radioButtons("dataInput", "", 
+                                             list("Load example data"=1, "Upload a file"=2), 
+                                             selected=1),
+                                conditionalPanel(condition="input.dataInput=='1'",
+                                                 h5("texto de exemplo")
+                                ),
+                                conditionalPanel(condition="input.dataInput=='2'",
+                                                 HTML('<br>'),
+                                                 h5("Upload a delimited text file (max. 10MB): "),
+                                                 #HTML('<i class="fa fa-beer fa-lg"></i>'),
+                                                 fileInput("upload", "", multiple = FALSE),
+                                                 radioButtons("fileSepDF", "Delimiter:", list("Comma"=1, "Tab"=2, "Semicolon"=3, "Space"=4),selected=2),
+                                                 
+                                                 conditionalPanel(condition="input.fileSepDF!='1'",
+                                                                  checkboxInput(inputId = "decimal", label = "Use comma as decimal", value = FALSE)
+                                                 ),
+                                                 
+                                                 HTML('<br>'),
+                                                 HTML('<p>You can upload your data as separated by comma, tab, semicolon or space.</p>'),
+                                                 HTML('<p><b>Note</b>: First row must be header.</p>')
+                                )
+                              )
                      ),
                      
                      tabPanel("UK transplant", icon = icon("user-md"),
