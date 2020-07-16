@@ -8,3 +8,4 @@ a.	An application of free access and available to any interested (researchers, h
 
 b.	KARS app allows not only testing current kidney allocation models, as well as testing changes in existing models so that we can understand how this can influence organs’ distribution
 
+https://balima.shinyapps.io/kars/
