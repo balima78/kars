@@ -1,6 +1,6 @@
 # server functions' file
 
-#source("scripts/read_data.R")
+source("scripts/read_data.R")
 source("scripts/compat_fxs.R")
 source("scripts/PT_fxs.R")
 
@@ -9,6 +9,16 @@ library(tidyverse)
 library(openxlsx)
 
 function(input, output) {
+  
+  output$ex.cands<- renderDataTable({
+    ex.candidates
+  })
+  output$ex.abs<- renderDataTable({
+    ex.abs
+  })
+  output$ex.donors<- renderDataTable({
+    ex.donors
+  })
   
   # read candidates' file
   datasetCands <- reactive({
@@ -51,10 +61,23 @@ function(input, output) {
     
   })
   
+  output$sel.cands<- renderDataTable({
+    datasetCands()
+  })
+  
+  output$sel.abs<- renderDataTable({
+    datasetAbs()
+  })
+  
+  output$sel.donors<- renderDataTable({
+    datasetDonors()
+  })
+  
 ## for pair of candidates selected according to unique donor 
   output$res1 <- renderDataTable({
     
-    candidates<-datasetCands()
+    if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCands()}
+    if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     
       dt<-pt_points(iso = input$iso, # isogroup compatibility
                   dABO = input$dabo, # donor's blood group
@@ -72,19 +95,20 @@ function(input, output) {
                   itemC = as.numeric(input$c), # points for C) on PT points table
                   itemD = as.numeric(input$d), # points for D) on PT points table
                   itemE = as.numeric(input$e), # points for E) on PT points table
-                  df.abs = datasetAbs())
+                  df.abs = abs.d)
 
     datatable(dt, options = list(pageLength = 5, dom = 'tip'))
   })
   
   datasetInput <- reactive({
     
-    donors<-datasetDonors()
+    if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCands()}
+    if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
+    if (input$dataInput == 1) {donors<-ex.donors} else {donors<-datasetDonors()}
     
-    abs<-datasetAbs()
-    
+
     # add a column to candidates' file to update respective donors
-    candidatesN<-datasetCands() %>% mutate(donor = 0)
+    candidatesN<-candidates %>% mutate(donor = 0)
     
     # create a list with the same length of the number of donors
     res <- vector("list", length = dim(donors)[1])
@@ -109,7 +133,7 @@ function(input, output) {
                           itemC = as.numeric(input$c), # points for C) on PT points table
                           itemD = as.numeric(input$d), # points for D) on PT points table
                           itemE = as.numeric(input$e), # points for E) on PT points table
-                          df.abs = abs) %>% 
+                          df.abs = abs.d) %>% 
         mutate(donor = donors$ID[i])
       
       candidatesN<-candidatesN %>% 

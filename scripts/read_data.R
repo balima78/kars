@@ -4,8 +4,8 @@ library(tidyverse)
 
 ## candidates demographic
 # file example
-candidates <- read_csv2("files/candidates.csv")
-candidates<-candidates %>% 
+ex.candidates <- read_csv2("files/candidates.csv")
+ex.candidates<-ex.candidates %>% 
   mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character)
 
 ## columns description
@@ -18,7 +18,7 @@ candidates<-candidates %>%
 
 ## candidates HLA antibodies
 # file example
-abs <- read_csv2("files/abs.csv")
+ex.abs <- read_csv2("files/abs.csv")
 
 ## columns description
 # ID - candidates identification; type integer
@@ -26,8 +26,8 @@ abs <- read_csv2("files/abs.csv")
 
 ## donors demographic
 # file example
-donors <- read_csv2("files/donors.csv")
-donors<-donors %>% 
+ex.donors <- read_csv2("files/donors.csv")
+ex.donors<-ex.donors %>% 
   mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character)
 
 ## columns description

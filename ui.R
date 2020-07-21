@@ -9,29 +9,67 @@ fluidPage(theme = shinytheme("spacelab"),
           titlePanel("HEADS | FMUP"),
           
           navbarPage("KARS",
+                     tabPanel("Upload data", icon = icon("database"),
+                              # select data to use
+                              sidebarPanel(
+                                a("Upload files:"),
+                                wellPanel(
+                                  radioButtons("dataInput", "", 
+                                               list("Load example data"=1, 
+                                                    "Upload your files"=2), selected=1),
+                                  conditionalPanel(condition="input.dataInput=='2'",
+                                                   a("Your data files must be in the exact format as the provided example data"),
+                                                   fileInput("file_cand", "upload candidates",
+                                                             accept = c("text/csv",
+                                                                        "text/comma-separated-values,text/plain",
+                                                                        ".csv")),
+                                                   fileInput("file_abs", "upload candidates' antibodies",
+                                                             accept = c("text/csv",
+                                                                        "text/comma-separated-values,text/plain",
+                                                                        ".csv")),
+                                                   fileInput("file_donor", "upload donors",
+                                                             accept = c("text/csv",
+                                                                        "text/comma-separated-values,text/plain",
+                                                                        ".csv"))
+                                  
+                                )
+                              )
+                              ),
+                              # show selected data 
+                              mainPanel(
+                                conditionalPanel(condition="input.dataInput=='1'",
+                                                 h4("Example data for transplant candidates:"),
+                                                 dataTableOutput(outputId = "ex.cands")),
+                                conditionalPanel(condition="input.dataInput=='2'",
+                                                 h4("Uploaded data for transplant candidates:"),
+                                                 dataTableOutput(outputId = "sel.cands")),
+                                br(),                 
+                                conditionalPanel(condition="input.dataInput=='1'",
+                                                 h4("Example data for HLA antibodies from transplant candidates"),
+                                                 dataTableOutput(outputId = "ex.abs")),
+                                conditionalPanel(condition="input.dataInput=='2'",
+                                                 h4("Uploaded data for HLA antibodies from transplant candidates"),
+                                                 dataTableOutput(outputId = "sel.abs")),
+                                
+                                br(),
+                                conditionalPanel(condition="input.dataInput=='1'",
+                                                h4("Example data from kidney donors"),
+                                                dataTableOutput(outputId = "ex.donors")),
+                                conditionalPanel(condition="input.dataInput=='2'",
+                                                 h4("Uploaded data from kidney donors"),
+                                                 dataTableOutput(outputId = "sel.donors"))
+                                
+                                
+                              )
+                              
+                     ),
                      tabPanel("Portugal", icon = icon("heartbeat"),
                               # Application title
                               #titlePanel("opções para os gráficos"),
                               # Sidebar with options 
                               sidebarPanel(
-                                a("Upload files:"),
-                                wellPanel(
-                                  fileInput("file_cand", "upload candidates",
-                                            accept = c("text/csv",
-                                                       "text/comma-separated-values,text/plain",
-                                                       ".csv")),
-                                  fileInput("file_abs", "upload candidates' antibodies",
-                                            accept = c("text/csv",
-                                                       "text/comma-separated-values,text/plain",
-                                                       ".csv")),
-                                  fileInput("file_donor", "upload donors",
-                                            accept = c("text/csv",
-                                                       "text/comma-separated-values,text/plain",
-                                                       ".csv"))
-                                  
-                                ),
                                 
-                                submitButton("Apply changes", icon = icon("refresh")),
+                               # submitButton("Apply changes", icon = icon("refresh")),
                                 
                                 a("Define punctuaction for PT algorithm:"),
                                 wellPanel(
@@ -65,7 +103,7 @@ fluidPage(theme = shinytheme("spacelab"),
                                 )
                                 
                               ),
-                              # Show a plot of despesas
+                              # Show results 
                               mainPanel(
                                 a("Options for one donor"),
                                 fluidRow(sliderInput("dage", "Select donor's age:",
