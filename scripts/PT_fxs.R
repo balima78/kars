@@ -108,7 +108,8 @@ pt_points<-function(iso = TRUE, # isogroup compatibility
                     itemC = 4, # points for C) on PT points table
                     itemD = 2, # points for D) on PT points table
                     itemE = 1, # points for E) on PT points table
-                    df.abs = abs # data frame with candidates' HLA antibodies
+                    df.abs = abs, # data frame with candidates' HLA antibodies
+                    n = 2 # slice first n rows
 ){
   
   cdata %>% 
@@ -137,7 +138,7 @@ pt_points<-function(iso = TRUE, # isogroup compatibility
            pointsPT = pointsHLA + pointsPRA + pointsDial + pointsAge) %>% 
     filter(compBlood == TRUE & (xm == FALSE | is.na(xm))) %>% 
     arrange(desc(pointsPT)) %>% 
-    slice(1:2) %>% 
+    slice(1:n) %>% 
     select(ID, bg, 
            A1, A2, B1, B2, DR1, DR2, 
            mmA, mmB, mmDR, 

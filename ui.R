@@ -43,7 +43,7 @@ fluidPage(theme = shinytheme("spacelab"),
                                 conditionalPanel(condition="input.dataInput=='2'",
                                                  h4("Uploaded data for transplant candidates:"),
                                                  dataTableOutput(outputId = "sel.cands")),
-                                br(),                 
+                                hr(),                 
                                 conditionalPanel(condition="input.dataInput=='1'",
                                                  h4("Example data for HLA antibodies from transplant candidates"),
                                                  dataTableOutput(outputId = "ex.abs")),
@@ -51,7 +51,7 @@ fluidPage(theme = shinytheme("spacelab"),
                                                  h4("Uploaded data for HLA antibodies from transplant candidates"),
                                                  dataTableOutput(outputId = "sel.abs")),
                                 
-                                br(),
+                                hr(),
                                 conditionalPanel(condition="input.dataInput=='1'",
                                                 h4("Example data from kidney donors"),
                                                 dataTableOutput(outputId = "ex.donors")),
@@ -64,8 +64,7 @@ fluidPage(theme = shinytheme("spacelab"),
                               
                      ),
                      tabPanel("Portugal", icon = icon("heartbeat"),
-                              # Application title
-                              #titlePanel("opções para os gráficos"),
+                              
                               # Sidebar with options 
                               sidebarPanel(
                                 
@@ -73,6 +72,10 @@ fluidPage(theme = shinytheme("spacelab"),
                                 
                                 a("Define punctuaction for PT algorithm:"),
                                 wellPanel(
+                                  actionButton("Go","Select your options and run it!!"),
+                                  
+                                  checkboxInput("iso", "ABO identical", TRUE),
+                                  
                                   sliderInput("a", "no HLA mismatchs",
                                               min = 0, max = 20,
                                               value = 12, step = 1, sep = ""),
@@ -100,23 +103,21 @@ fluidPage(theme = shinytheme("spacelab"),
                                   sliderInput("age_dif", "Age difference between donor and candidate",
                                               min = 0, max = 20,
                                               value = 4, step = 1, sep = "")
-                                )
+                                  )
                                 
                               ),
                               # Show results 
                               mainPanel(
-                                a("Options for one donor"),
+                                h4("Options for one donor"),
                                 fluidRow(sliderInput("dage", "Select donor's age:",
                                                      min = 18, max = 80,
                                                      value = 60, step = 1, sep = "")
-                                ),
+                                         ),
                                 fluidRow(column(4,
                                                 radioButtons("dabo", "Select donor's blood group:",
                                                              c("A", "B", "AB", "O"),
-                                                             inline = TRUE)),
-                                         column(4,
-                                                checkboxInput("iso", "ABO identical", TRUE))
-                                ),
+                                                             inline = TRUE))
+                                         ),
                                 fluidRow(column(2,
                                                 textAreaInput("a1", "A1", 1,
                                                               width = 50,
@@ -143,11 +144,13 @@ fluidPage(theme = shinytheme("spacelab"),
                                                               height = 40))
                                 ),
                                 fluidRow(
-                                  textOutput("res0"),
+                                  h4("top 10 selected candidates for this specific donor"),
                                   dataTableOutput(outputId = "res1")
                                 ),
                                 hr(),
+                                h4("Selected donor-recipient pairs for transplantation:"),
                                 fluidRow(dataTableOutput(outputId = "resm"),
+                                         br(),
                                          downloadButton("downloadData", "Download"))
                               )
                      ),
