@@ -30,7 +30,8 @@ fluidPage(theme = shinytheme("spacelab"),
                                                    fileInput("file_donor", "upload donors",
                                                              accept = c("text/csv",
                                                                         "text/comma-separated-values,text/plain",
-                                                                        ".csv"))
+                                                                        ".csv")),
+                                                   radioButtons("fileSepDF", "Files' delimiter:", list("Comma"=1, "Tab"=2, "Semicolon"=3, "Space"=4),selected=3)
                                   
                                 )
                               )
@@ -72,8 +73,6 @@ fluidPage(theme = shinytheme("spacelab"),
                                 
                                 a("Define punctuaction for PT algorithm:"),
                                 wellPanel(
-                                  actionButton("Go","Select your options and run it!!"),
-                                  
                                   checkboxInput("iso", "ABO identical", TRUE),
                                   
                                   sliderInput("a", "no HLA mismatchs",
@@ -148,6 +147,8 @@ fluidPage(theme = shinytheme("spacelab"),
                                   dataTableOutput(outputId = "res1")
                                 ),
                                 hr(),
+                                actionButton("Go","Select your options and run it!!"),
+                                h6("(it can take several seconds, be patient!)"),
                                 h4("Selected donor-recipient pairs for transplantation:"),
                                 fluidRow(dataTableOutput(outputId = "resm"),
                                          br(),

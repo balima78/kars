@@ -32,8 +32,15 @@ function(input, output) {
     if (is.null(file_cands))
       return(NULL)
     
-    data<-read.csv2(file_cands$datapath) 
+    if (input$fileSepDF == 1) {
+      data<-read.csv(file_cands$datapath)
+    } else if (input$fileSepDF == 2) {
+      read.delim(file_cands$datapath)
+    } else if (input$fileSepDF == 3) {
+      data<-read.csv2(file_cands$datapath)
+    } else {data<-read.table(file_cands$datapath)}
     
+     
     validate(
       need(identical(colnames(data),colnames(ex.candidates)), 
            "Candidates column names are not identical to example data!")
@@ -54,7 +61,14 @@ function(input, output) {
     if (is.null(file_donors))
       return(NULL)
     
-    data<-read.csv2(file_donors$datapath) 
+    if (input$fileSepDF == 1) {
+      data<-read.csv(file_donors$datapath)
+    } else if (input$fileSepDF == 2) {
+      read.delim(file_donors$datapath)
+    } else if (input$fileSepDF == 3) {
+      data<-read.csv2(file_donors$datapath)
+    } else {data<-read.table(file_donors$datapath)}
+    
     
     validate(
       need(identical(colnames(data),colnames(ex.donors)), 
@@ -75,7 +89,14 @@ function(input, output) {
     if (is.null(file_abss))
       return(NULL)
     
-    data<-read.csv2(file_abss$datapath) 
+    if (input$fileSepDF == 1) {
+      data<-read.csv(file_abss$datapath)
+    } else if (input$fileSepDF == 2) {
+      read.delim(file_abss$datapath)
+    } else if (input$fileSepDF == 3) {
+      data<-read.csv2(file_abss$datapath)
+    } else {data<-read.table(file_abss$datapath)}
+    
     
     validate(
       need(identical(colnames(data),colnames(ex.abs)), 
@@ -100,16 +121,6 @@ function(input, output) {
   })
   
 ## for pair of candidates selected according to unique donor 
-  observeEvent(input$Go, {
-    pra80 = as.numeric(input$pra8) # points for a PRA equal or higher than 80%
-    pra50 = as.numeric(input$pra5) # points for a PRA equal or higher than 50%
-    month = input$dialysis # points for each month on dialysis
-    points = input$age_dif # points for age difference in PT punctuation table
-    itemA = as.numeric(input$a) # points for A) on PT points table
-    itemB = as.numeric(input$b) # points for B) on PT points table
-    itemC = as.numeric(input$c) # points for C) on PT points table
-    itemD = as.numeric(input$d) # points for D) on PT points table
-    itemE = as.numeric(input$e) # points for E) on PT points table
   
   output$res1 <- renderDataTable({
     
@@ -131,22 +142,21 @@ function(input, output) {
                   dDR = c(input$dr1,input$dr2),
                   dage = input$dage, # donor's age
                   cdata = candidates, # data file with candidates
-                  pra80 = pra80, # points for a PRA equal or higher than 80%
-                  pra50 = pra50, # points for a PRA equal or higher than 50%
-                  month = month, # points for each month on dialysis
-                  points = points, # points for age difference in PT punctuation table
-                  itemA = itemA, # points for A) on PT points table
-                  itemB = itemB, # points for B) on PT points table
-                  itemC = itemC, # points for C) on PT points table
-                  itemD = itemD, # points for D) on PT points table
-                  itemE = itemE, # points for E) on PT points table
+                  pra80 = as.numeric(input$pra8), # points for a PRA equal or higher than 80%
+                  pra50 = as.numeric(input$pra5), # points for a PRA equal or higher than 50%
+                  month = input$dialysis, # points for each month on dialysis
+                  points = input$age_dif, # points for age difference in PT punctuation table
+                  itemA = as.numeric(input$a), # points for A) on PT points table
+                  itemB = as.numeric(input$b), # points for B) on PT points table
+                  itemC = as.numeric(input$c), # points for C) on PT points table
+                  itemD = as.numeric(input$d), # points for D) on PT points table
+                  itemE = as.numeric(input$e), # points for E) on PT points table
                   df.abs = abs.d, # candidates' HLA antibodies
                   n = 10)
 
     datatable(dt, options = list(pageLength = 5, dom = 'tip'))
   })
-  
-  })
+
  
   observeEvent(input$Go, {
     
