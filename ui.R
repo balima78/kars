@@ -68,8 +68,8 @@ fluidPage(theme = shinytheme("spacelab"),
                               
                               # Sidebar with options 
                               sidebarPanel(
-                                
-                               # submitButton("Apply changes", icon = icon("refresh")),
+                                shinyjs::useShinyjs(),
+                                id = "side-panelPT",
                                 
                                 a("Define punctuaction for PT algorithm:"),
                                 wellPanel(
@@ -101,7 +101,8 @@ fluidPage(theme = shinytheme("spacelab"),
                                               value = 0.1, step = 0.01, sep = ""),
                                   sliderInput("age_dif", "Age difference between donor and candidate",
                                               min = 0, max = 20,
-                                              value = 4, step = 1, sep = "")
+                                              value = 4, step = 1, sep = ""),
+                                  actionButton("reset_inputPT", "Reset inputs")
                                   )
                                 
                               ),
@@ -158,15 +159,88 @@ fluidPage(theme = shinytheme("spacelab"),
                      
                      tabPanel("EuroTransplant", icon = icon("medkit"),
                               sidebarPanel(
-                                a("xxxx"),
+                                shinyjs::useShinyjs(),
+                                id = "side-panelET",
+                                a("Define punctuaction for ETKAS algorithm:"),
                                 wellPanel(
-                                  sliderInput("anoH", "Seleccione intervalo:",
-                                              min = 2000, max = 2018, step = 1, sep = "",
-                                              value = c(2000,2018))
+                                  checkboxInput("isoET", "ABO identical", TRUE),
+                                  sliderInput("mm0", "0  HLA-A, -B, -DR mismatchs",
+                                              min = 0, max = 1000,
+                                              value = 400, step = 10, sep = ""),
+                                  sliderInput("mm1", "1  HLA-A, -B, -DR mismatchs",
+                                              min = 0, max = 1000,
+                                              value = 333.33, step = 10, sep = ""),
+                                  sliderInput("mm2", "2  HLA-A, -B, -DR mismatchs",
+                                              min = 0, max = 1000,
+                                              value = 266.67, step = 10, sep = ""),
+                                  sliderInput("mm3", "3  HLA-A, -B, -DR mismatchs",
+                                              min = 0, max = 1000,
+                                              value = 200, step = 10, sep = ""),
+                                  sliderInput("mm4", "4  HLA-A, -B, -DR mismatchs",
+                                              min = 0, max = 1000,
+                                              value = 133.33, step = 10, sep = ""),
+                                  sliderInput("mm5", "5  HLA-A, -B, -DR mismatchs",
+                                              min = 0, max = 1000,
+                                              value = 66.67, step = 10, sep = ""),
+                                  sliderInput("mm6", "6  HLA-A, -B, -DR mismatchs",
+                                              min = 0, max = 1000,
+                                              value = 0, step = 10, sep = ""),
+                                  sliderInput("tdET", "Time on dialysis (points per month)",
+                                              min = 0, max = 10,
+                                              value = 2.78, step = 1, sep = ""),
+                                  
+                                  actionButton("reset_inputET", "Reset inputs")
                                 )
                               ),
                               
-                              mainPanel()
+                              mainPanel(
+                                h4("Options for one donor"),
+                                fluidRow(sliderInput("dageET", "Select donor's age:",
+                                                     min = 18, max = 80,
+                                                     value = 60, step = 1, sep = "")
+                                ),
+                                fluidRow(column(4,
+                                                radioButtons("daboET", "Select donor's blood group:",
+                                                             c("A", "B", "AB", "O"),
+                                                             inline = TRUE))
+                                ),
+                                fluidRow(column(2,
+                                                textAreaInput("a1ET", "A1", 1,
+                                                              width = 50,
+                                                              height = 40)),
+                                         column(2, 
+                                                textAreaInput("a2ET", "A2", 2,
+                                                              width = 50,
+                                                              height = 40)),
+                                         column(2,
+                                                textAreaInput("b1ET", "B1", 7,
+                                                              width = 50,
+                                                              height = 40)),
+                                         column(2,
+                                                textAreaInput("b2ET", "B2", 8,
+                                                              width = 50,
+                                                              height = 40)),
+                                         column(2,
+                                                textAreaInput("dr1ET", "DR1", 1,
+                                                              width = 50,
+                                                              height = 40)),
+                                         column(2,
+                                                textAreaInput("dr2ET", "DR2", 3,
+                                                              width = 50,
+                                                              height = 40))
+                                ),
+                                fluidRow(
+                                  h4("top 10 selected candidates for this specific donor"),
+                                  dataTableOutput(outputId = "res1ET")
+                                ),
+                                hr(),
+                                actionButton("GoET","Select your options and run it!!"),
+                                h6("(it can take several seconds, be patient!)"),
+                                h4("Selected donor-recipient pairs for transplantation:"),
+                                fluidRow(dataTableOutput(outputId = "resmET"),
+                                         br(),
+                                         downloadButton("downloadDataET", "Download"))
+                              )
                      ),
                      
                      tabPanel("Lima", icon = icon("file-medical-alt"),

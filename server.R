@@ -157,6 +157,11 @@ function(input, output) {
     datatable(dt, options = list(pageLength = 5, dom = 'tip'))
   })
 
+  
+  #### to reset PT sidebarpanel
+  observeEvent(input$reset_inputPT, {
+    shinyjs::reset("side-panelPT")
+  })
  
   observeEvent(input$Go, {
     
@@ -248,7 +253,9 @@ function(input, output) {
   ######################### testes para apagar no tab LIMA#######################
   
   
-  
+  observeEvent(input$reset_inputET, {
+    shinyjs::reset("side-panelET")
+  })
   
   
 }
