@@ -3,6 +3,7 @@
 source("scripts/read_data.R")
 source("scripts/compat_fxs.R")
 source("scripts/PT_fxs.R")
+source("scripts/ET_fxs.R")
 
 library(DT)
 library(tidyverse)
@@ -12,7 +13,8 @@ function(input, output) {
   
   output$ex.cands<- renderDataTable({
     
-    datatable(ex.candidates,
+    datatable(ex.candidates %>%
+                select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA),
               rownames = FALSE)
   })
   output$ex.abs<- renderDataTable({
@@ -42,7 +44,7 @@ function(input, output) {
     
      
     validate(
-      need(identical(colnames(data),colnames(ex.candidates)), 
+      need(identical(colnames(data),c("ID","bg","A1","A2","B1","B2","DR1","DR2","age","dialysis","cPRA")), 
            "Candidates column names are not identical to example data!")
       )
     
@@ -120,11 +122,12 @@ function(input, output) {
     datasetDonors() %>% datatable(rownames = FALSE)
   })
   
-## for pair of candidates selected according to unique donor 
+## for 10 best candidates selected according to unique donor 
   
   output$res1 <- renderDataTable({
     
-    if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCands()}
+    if (input$dataInput == 1) {candidates<-ex.candidates %>% 
+      select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands()}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     
     validate(
@@ -238,6 +241,7 @@ function(input, output) {
   #   
   #   compute_resm()
   # })
+  # https://www.r-bloggers.com/long-running-tasks-with-shiny-challenges-and-solutions/
   
   # Downloadable csv of selected dataset ----
   output$downloadData <- downloadHandler(
@@ -250,8 +254,93 @@ function(input, output) {
   )
   
   
-  ######################### testes para apagar no tab LIMA#######################
+  ######################### ET algorithm #######################
   
+  ## compute MMP for uploaded candidates dataset
+  # take uploaded dataset and compute MMP
+  datasetCandsET<-reactive({
+    data<-datasetCands() %>% left_join(hlaA %>% select(A,freq), by = c("A1" = "A"))
+    data<- data %>% rename(a1=freq)
+
+  data<-data %>% left_join(hlaA %>% select(A,freq), by = c("A2" = "A"))
+  data<- data %>% rename(a2=freq)
+
+  data<-data %>% left_join(hlaB %>% select(B,freq), by = c("B1" = "B"))
+  data<- data %>% rename(b1=freq)
+
+  data<-data %>% left_join(hlaB %>% select(B,freq), by = c("B2" = "B"))
+  data<- data %>% rename(b2=freq)
+
+  data<-data %>% left_join(hlaDR %>% select(DR,freq), by = c("DR1" = "DR"))
+  data<- data %>% rename(dr1=freq)
+
+  data<-data %>% left_join(hlaDR %>% select(DR,freq), by = c("DR2" = "DR"))
+  data<- data %>% rename(dr2=freq)
+
+  data<-data %>% left_join(abo, by = c("bg" = "abo"))
+  data<- data %>% rename(abo=freq)
+
+  # compute MMP2 and add it to the data file
+  data$MMP2 <- with(data,
+                         (((2*(a1+a2)*(1 - a1 - a2)) - a1^2 - a2^2 + SallA) /
+                            ((a1+a2)^2))
+                         + (((2*(b1+b2)*(1 - b1 - b2)) - b1^2 - b2^2 + SallB) /
+                              ((b1+b2)^2))
+                         + (((2*(dr1+dr2)*(1 - dr1 - dr2) ) - dr1^2 - dr2^2 + SallDR) /
+                              ((dr1+dr2)^2))
+  )
+
+  # compute MMP0 and add it to the data file
+  data$MMP0 <- with(data,
+                         (a1+a2)^2 * (b1+b2)^2 * (dr1+dr2)^2)
+
+  # compute MMP1 and add it to the data file
+  data$MMP1 <- with(data,
+                         MMP0 * MMP2)
+
+  # compute MMP and add it to the data file
+  data$MMP<-with(data,
+                      100 * (1-(abo * (1-cPRA/100) * (MMP0 + MMP1)))^1000
+  )
+  
+  data
+  })
+
+ 
+  ## for 10 first candidates selected according to unique donor 
+  output$res1ET <- renderDataTable({
+
+    if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCandsET()}
+    if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
+
+    validate(
+      need(candidates != "", "Please select a candidates data set!")
+    )
+
+    validate(
+      need(abs.d != "", "Please select candidates' HLA antibodies data set!")
+    )
+
+    dt<-et_points(iso = input$isoET, # isogroup compatibility
+                  dABO = input$daboET, # donor's blood group
+                  dA = c(input$a1ET,input$a2ET),
+                  dB = c(input$b1ET,input$b2ET),
+                  dDR = c(input$dr1ET,input$dr2ET),
+                  dage = input$dageET, # donor's age
+                  cdata = candidates, # data file with candidates
+                  month = as.numeric(input$tdET), # points for each month on dialysis
+                  mm0 = as.numeric(input$mm0), # points for 0 HLA mm on ETKAS points table
+                  mm1 = as.numeric(input$mm1), # points for 1 HLA mm on ET points table
+                  mm2 = as.numeric(input$mm2), # points for 2 HLA mm on ET points table
+                  mm3 = as.numeric(input$mm3), # points for 3 HLA mm on ET points table
+                  mm4 = as.numeric(input$mm4), # points for 4 HLA mm on ET points table
+                  mm5 = as.numeric(input$mm5), # points for 5 HLA mm on ET points table
+                  mm6 = as.numeric(input$mm6), # points for 6 HLA mm on ET points table
+                  df.abs = abs.d, # candidates' HLA antibodies
+                  n = 10)
+
+    datatable(dt, options = list(pageLength = 5, dom = 'tip'))
+  }) 
   
   observeEvent(input$reset_inputET, {
     shinyjs::reset("side-panelET")

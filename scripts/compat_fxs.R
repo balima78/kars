@@ -73,7 +73,7 @@ mmHLA<-function(dA = c("01","02"), # donor's HLA-A typing
 
 
 # xmatch
-
+## this function give an error in a higher R version
 xmatch<-function(dA = c("01","02"), # donor's HLA-A typing
                  dB = c("03","05"), # donor's HLA-B typing
                  dDR = c("04","06"), # donor's HLA-DR typing
@@ -101,3 +101,30 @@ xmatch<-function(dA = c("01","02"), # donor's HLA-A typing
   
   return(x)
 }
+
+## v2 for the xmtach function 
+xmatch.v2<-function(dA = c("01","02"), # donor's HLA-A typing
+                    dB = c("03","05"), # donor's HLA-B typing
+                    dDR = c("04","06"), # donor's HLA-DR typing
+                    df.abs = ex.abs # data frame with candidates' HLA antibodies
+){  
+  
+  # compile donors typing in a single vector
+  hla<-c(paste0("A",dA[1]), paste0("A",dA[2]),
+         paste0("B",dB[1]), paste0("B",dB[2]),
+         paste0("DR",dDR[1]), paste0("DR",dDR[2]))
+  
+  # verify function parameters
+  if(!is.character(dA)){stop("donor's HLA-A typing is not valid!\n")}
+  if(!is.character(dB)){stop("donor's HLA-B typing is not valid!\n")}
+  if(!is.character(dDR)){stop("donor's HLA-DR typing is not valid!\n")}
+  
+  # compute xmatch for each one of the HLA antibodies
+  x<-df.abs %>% 
+    mutate(xm=is.element(.$abs, hla))  %>% 
+    filter(xm == TRUE) %>%  
+    distinct(ID,xm)
+  
+  return(x)
+}
+

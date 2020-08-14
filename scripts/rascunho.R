@@ -55,3 +55,78 @@ rbindlist(res)
 as.data.frame(
 pt_points()
 )
+
+##### compute MMP from ETKAS
+# read candidates files without MMP's
+ex.candid <- read_csv2("files/candid.csv")
+
+## HLA frequencies from portuguese CEDACE donors (Lima, 2013)
+# A - HLA-A alleles; B - HLA-B alleles; DR - HLA-DR alleles;
+# n - allele countings; type integer
+# freq - allele relative frequencies; type numeric (between 0 and 100)
+hlaA <- read.csv2("files/hlaA.csv") %>% 
+  mutate_at(vars(A),as.character)
+hlaB <- read.csv2("files/hlaB.csv") %>% 
+  mutate_at(vars(B),as.character)
+hlaDR <- read.csv2("files/hlaDR.csv") %>% 
+  mutate_at(vars(DR),as.character)
+
+## ABO blood group frequencies from portuguese blood donors (Duran et al, 2007)
+# abo - blood groups; type character (A, AB, B, O) 
+# freq - ABO relative frequencies; type numeric (between 0 and 1)
+abo <- read.csv2("files/abo.csv") %>% 
+  mutate_at(vars(abo),as.character)
+
+## compute MMP from ETKAS
+# compute the sum of squared frequencies for each loci
+SallA <-sum(hlaA$freq^2)
+SallB <-sum(hlaB$freq^2)
+SallDR <-sum(hlaDR$freq^2)
+
+# join to candidates data file the respective alle frequency
+ex.candid<-ex.candid %>% left_join(hlaA %>% select(A,freq), by = c("A1" = "A")) 
+ex.candid<- ex.candid %>% rename(a1=freq)
+
+ex.candid<-ex.candid %>% left_join(hlaA %>% select(A,freq), by = c("A2" = "A")) 
+ex.candid<- ex.candid %>% rename(a2=freq)
+
+ex.candid<-ex.candid %>% left_join(hlaB %>% select(B,freq), by = c("B1" = "B")) 
+ex.candid<- ex.candid %>% rename(b1=freq)
+
+ex.candid<-ex.candid %>% left_join(hlaB %>% select(B,freq), by = c("B2" = "B")) 
+ex.candid<- ex.candid %>% rename(b2=freq)
+
+ex.candid<-ex.candid %>% left_join(hlaDR %>% select(DR,freq), by = c("DR1" = "DR")) 
+ex.candid<- ex.candid %>% rename(dr1=freq)
+
+ex.candid<-ex.candid %>% left_join(hlaDR %>% select(DR,freq), by = c("DR2" = "DR")) 
+ex.candid<- ex.candid %>% rename(dr2=freq)
+
+ex.candid<-ex.candid %>% left_join(abo, by = c("bg" = "abo")) 
+ex.candid<- ex.candid %>% rename(abo=freq)
+
+# compute MMP2 and add it to the data file
+ex.candid$MMP2 <- with(ex.candid,
+                           (((2*(a1+a2)*(1 - a1 - a2)) - a1^2 - a2^2 + SallA) /
+                              ((a1+a2)^2))
+                           + (((2*(b1+b2)*(1 - b1 - b2)) - b1^2 - b2^2 + SallB) /
+                                ((b1+b2)^2))
+                           + (((2*(dr1+dr2)*(1 - dr1 - dr2) ) - dr1^2 - dr2^2 + SallDR) /
+                                ((dr1+dr2)^2))
+)
+
+# compute MMP0 and add it to the data file
+ex.candid$MMP0 <- with(ex.candid,
+                           (a1+a2)^2 * (b1+b2)^2 * (dr1+dr2)^2)
+
+# compute MMP1 and add it to the data file
+ex.candid$MMP1 <- with(ex.candid, 
+                           MMP0 * MMP2)
+
+# compute MMP and add it to the data file
+ex.candid$MMP<-with(ex.candid,
+                        100 * (1-(abo * (1-cPRA/100) * (MMP0 + MMP1)))^1000
+)
+
+
+write.csv2(ex.candid,"candidates.csv")

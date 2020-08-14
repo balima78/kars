@@ -38,9 +38,49 @@ tibble(data.frame(abs,res = is.element(abs$abs, hla))) %>%
   distinct(ID,xmatch)
   
 
-
-
-
 xmatch()
 
-  
+## example dor et_sp
+
+candidatos<-ex.candidates %>% rowwise() %>% 
+  mutate(sp=et_sp(dage = 65, cage = age)) %>% ungroup()
+
+## example for et_mmHLA
+et_mmHLA(dA = c("01","02"),
+         dB = c("03","05"), 
+         dDR = c("04","06"), 
+         cA = c("02","01"), 
+         cB = c("07","05"), 
+         cDR = c("04","06"))
+
+mmHLA(dA = c("01","02"),
+      dB = c("03","05"), 
+      dDR = c("04","06"), 
+      cA = c("02","01"), 
+      cB = c("07","05"), 
+      cDR = c("04","06"))
+
+
+et_dial(dial = 301)
+
+
+## verifying function et_points 
+candidatos<-read.csv2("files/candidates.csv")
+
+candidatos<-candidatos %>% mutate_at(vars(bg, A1, A2, B1, B2, DR1, DR2), as.character)
+
+as.data.frame(
+et_points(cdata = ex.candidates, df.abs = ex.abs, dage = 70) )
+
+
+
+teste<-xmatch.v2(dA = c("1","2"), 
+                    dB = c("7","8"), 
+                    dDR = c("1","3"), 
+                    df.abs = ex.abs)
+
+table(teste$abs, teste$xm)
+
+candidatos %>% left_join(teste)
+
+

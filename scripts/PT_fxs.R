@@ -113,7 +113,7 @@ pt_points<-function(iso = TRUE, # isogroup compatibility
 ){
   
   cdata %>% 
-    left_join(xmatch(dA = dA, dB = dB, dDR = dDR,
+    left_join(xmatch.v2(dA = dA, dB = dB, dDR = dDR,
                      df.abs = df.abs)) %>%
     rowwise() %>% 
     mutate(donor_age = dage,
