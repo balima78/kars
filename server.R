@@ -165,8 +165,22 @@ function(input, output) {
   observeEvent(input$reset_inputPT, {
     shinyjs::reset("side-panelPT")
   })
+  
+  N <- 100
+  
+  compute_resm <- reactiveVal()
  
   observeEvent(input$Go, {
+    
+    compute_resm(NULL)
+    
+    withProgress(message = 'Calculation in progress', {
+      for(i in 1:N){
+        # Long Running Task
+        Sys.sleep(1)
+        # Update progress
+        incProgress(1/N)
+        }
     
     pra80 = as.numeric(input$pra8) # points for a PRA equal or higher than 80%
     pra50 = as.numeric(input$pra5) # points for a PRA equal or higher than 50%
@@ -178,7 +192,7 @@ function(input, output) {
     itemD = as.numeric(input$d) # points for D) on PT points table
     itemE = as.numeric(input$e) # points for E) on PT points table
    
-    output$resm <- renderDataTable({ 
+    
     
     if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCands()}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
@@ -232,17 +246,16 @@ function(input, output) {
     }
     
     ## bind the results in the list
-    do.call(rbind, res)
-    
+    compute_resm(do.call(rbind, res))
     })
+    
+    
   })
-  
-  # output$resm <- renderDataTable({ 
-  #   
-  #   compute_resm()
-  # })
-  # https://www.r-bloggers.com/long-running-tasks-with-shiny-challenges-and-solutions/
-  
+
+  output$resm <- renderDataTable({
+    compute_resm()
+  })
+
   # Downloadable csv of selected dataset ----
   output$downloadData <- downloadHandler(
     filename = function() {

@@ -51,17 +51,20 @@ mmHLA<-function(dA = c("01","02"), # donor's HLA-A typing
   if(!is.character(cDR)){stop("candidate's HLA-DR typing is not valid!\n")}
     
   # compute missmatches
-  mmA<-if_else(dA[1] %in% cA & dA[2] %in% cA, 0,
-              if_else(dA[1] %in% cA | dA[2] %in% cA, 1, 
-                     if_else(dA[1] == dA[2],1,2)))
+  mmA<-if_else((dA[1] %in% cA & dA[2] %in% cA) | (dA[1] %in% cA & (is.na(dA[2]) | dA[2] == "")), 0,
+              if_else(dA[1] %in% cA | dA[2] %in% cA, 1,
+                      if_else(!dA[1] %in% cA & (is.na(dA[2]) | dA[2] == ""), 1,
+                              if_else(dA[1] == dA[2], 1,2))))
   
-  mmB<-if_else((dB[1] %in% cB & dB[2] %in% cB) | (dB[1] %in% cB & is.na(dB[2])), 0,
-              if_else(dB[1] %in% cB | dB[2] %in% cB, 1, 
-                     if_else(dB[1] == dB[2],1,2)))
+  mmB<-if_else((dB[1] %in% cB & dB[2] %in% cB) | (dB[1] %in% cB & (is.na(dB[2]) | dB[2] == "")), 0,
+              if_else(dB[1] %in% cB | dB[2] %in% cB, 1,
+                      if_else(!dB[1] %in% cB & (is.na(dB[2]) | dB[2] == ""), 1,
+                              if_else(dB[1] == dB[2], 1,2))))
   
-  mmDR<-if_else((dDR[1] %in% cDR & dDR[2] %in% cDR) | (dDR[1] %in% cDR & is.na(dDR[2])), 0,
-              if_else(dDR[1] %in% cDR | dDR[2] %in% cDR, 1, 
-                     if_else(dDR[1] == dDR[2],1,2)))
+  mmDR<-if_else((dDR[1] %in% cDR & dDR[2] %in% cDR) | (dDR[1] %in% cDR & (is.na(dDR[2]) | dDR[2] == "")), 0,
+              if_else(dDR[1] %in% cDR | dDR[2] %in% cDR, 1,
+                      if_else(!dDR[1] %in% cDR & (is.na(dDR[2]) | dDR[2] == ""), 1,
+                              if_else(dDR[1] == dDR[2],1,2))))
   
   # resume results
   mmHLA = mmA + mmB + mmDR
