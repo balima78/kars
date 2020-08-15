@@ -166,7 +166,7 @@ function(input, output) {
     shinyjs::reset("side-panelPT")
   })
   
-  N <- 100
+  N <- 2
   
   compute_resm <- reactiveVal()
  
@@ -174,26 +174,24 @@ function(input, output) {
     
     compute_resm(NULL)
     
-    withProgress(message = 'Calculation in progress', {
+    withProgress(message = 'Calculation in progress, be patient!', {
       for(i in 1:N){
         # Long Running Task
         Sys.sleep(1)
         # Update progress
         incProgress(1/N)
         }
-    
-    pra80 = as.numeric(input$pra8) # points for a PRA equal or higher than 80%
-    pra50 = as.numeric(input$pra5) # points for a PRA equal or higher than 50%
-    month = input$dialysis # points for each month on dialysis
-    points = input$age_dif # points for age difference in PT punctuation table
-    itemA = as.numeric(input$a) # points for A) on PT points table
-    itemB = as.numeric(input$b) # points for B) on PT points table
-    itemC = as.numeric(input$c) # points for C) on PT points table
-    itemD = as.numeric(input$d) # points for D) on PT points table
-    itemE = as.numeric(input$e) # points for E) on PT points table
+      
+      iso = input$iso
+      pra80 = as.numeric(input$pra8) # points for a PRA equal or higher than 80%
+      month = input$dialysis # points for each month on dialysis
+      points = input$age_dif # points for age difference in PT punctuation table
+      itemA = as.numeric(input$a) # points for A) on PT points table
+      itemB = as.numeric(input$b) # points for B) on PT points table
+      itemC = as.numeric(input$c) # points for C) on PT points table
+      itemD = as.numeric(input$d) # points for D) on PT points table
+      itemE = as.numeric(input$e) # points for E) on PT points table
    
-    
-    
     if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCands()}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     if (input$dataInput == 1) {donors<-ex.donors} else {donors<-datasetDonors()}
@@ -220,7 +218,7 @@ function(input, output) {
     for (i in 1:dim(donors)[1]){
       candid<-candidatesN %>% filter(donor == 0)
       
-      res[[i]]<-pt_points(iso = TRUE, # isogroup compatibility
+      res[[i]]<-pt_points(iso = iso, # ABO compatibility as selected 
                           dABO = donors$bg[i], # donor's blood group
                           dA = c(donors$A1[i],donors$A2[i]), 
                           dB = c(donors$B1[i],donors$B2[i]), 
@@ -259,7 +257,7 @@ function(input, output) {
   # Downloadable csv of selected dataset ----
   output$downloadData <- downloadHandler(
     filename = function() {
-      paste("Folha1", ".csv", sep = "")
+      paste("PT_results", ".csv", sep = "")
     },
     content = function(file) {
       write.csv2(compute_resm(), file, row.names = FALSE, fileEncoding="latin1")
@@ -274,24 +272,18 @@ function(input, output) {
   datasetCandsET<-reactive({
     data<-datasetCands() %>% left_join(hlaA %>% select(A,freq), by = c("A1" = "A"))
     data<- data %>% rename(a1=freq)
-
-  data<-data %>% left_join(hlaA %>% select(A,freq), by = c("A2" = "A"))
-  data<- data %>% rename(a2=freq)
-
-  data<-data %>% left_join(hlaB %>% select(B,freq), by = c("B1" = "B"))
-  data<- data %>% rename(b1=freq)
-
-  data<-data %>% left_join(hlaB %>% select(B,freq), by = c("B2" = "B"))
-  data<- data %>% rename(b2=freq)
-
-  data<-data %>% left_join(hlaDR %>% select(DR,freq), by = c("DR1" = "DR"))
-  data<- data %>% rename(dr1=freq)
-
-  data<-data %>% left_join(hlaDR %>% select(DR,freq), by = c("DR2" = "DR"))
-  data<- data %>% rename(dr2=freq)
-
-  data<-data %>% left_join(abo, by = c("bg" = "abo"))
-  data<- data %>% rename(abo=freq)
+    data<-data %>% left_join(hlaA %>% select(A,freq), by = c("A2" = "A"))
+    data<- data %>% rename(a2=freq)
+    data<-data %>% left_join(hlaB %>% select(B,freq), by = c("B1" = "B"))
+    data<- data %>% rename(b1=freq)
+    data<-data %>% left_join(hlaB %>% select(B,freq), by = c("B2" = "B"))
+    data<- data %>% rename(b2=freq)
+    data<-data %>% left_join(hlaDR %>% select(DR,freq), by = c("DR1" = "DR"))
+    data<- data %>% rename(dr1=freq)
+    data<-data %>% left_join(hlaDR %>% select(DR,freq), by = c("DR2" = "DR"))
+    data<- data %>% rename(dr2=freq)
+    data<-data %>% left_join(abo, by = c("bg" = "abo"))
+    data<- data %>% rename(abo=freq)
 
   # compute MMP2 and add it to the data file
   data$MMP2 <- with(data,
@@ -358,6 +350,101 @@ function(input, output) {
   observeEvent(input$reset_inputET, {
     shinyjs::reset("side-panelET")
   })
+ 
+  ## compute nultiple results for ET algorithm
+  compute_resmET <- reactiveVal()
+  
+  observeEvent(input$GoET, {
+    
+    compute_resmET(NULL)
+
+    withProgress(message = 'Calculation in progress, be patient!', {
+      for(i in 1:N){
+        # Long Running Task
+        Sys.sleep(1)
+        # Update progress
+        incProgress(1/N)
+      }
+      
+      iso = input$isoET
+      month = as.numeric(input$tdET) # points for each month on dialysis
+      mm0 = as.numeric(input$mm0) # points for 0 HLA mm on ETKAS points table
+      mm1 = as.numeric(input$mm1) # points for 1 HLA mm on ET points table
+      mm2 = as.numeric(input$mm2) # points for 2 HLA mm on ET points table
+      mm3 = as.numeric(input$mm3) # points for 3 HLA mm on ET points table
+      mm4 = as.numeric(input$mm4) # points for 4 HLA mm on ET points table
+      mm5 = as.numeric(input$mm5) # points for 5 HLA mm on ET points table
+      mm6 = as.numeric(input$mm6) # points for 6 HLA mm on ET points table
+      
+      if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCandsET()}
+      if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
+      if (input$dataInput == 1) {donors<-ex.donors} else {donors<-datasetDonors()}
+      
+      validate(
+        need(candidates != "", "Please select a candidates data set!")
+      )
+      
+      validate(
+        need(abs.d != "", "Please select candidates' HLA antibodies data set!")
+      )
+      
+      validate(
+        need(donors != "", "Please select donors' data set!")
+      )
+      
+      # add a column to candidates' file to update respective donors
+      candidatesN<-candidates %>% mutate(donor = 0)
+      
+      # create a list with the same length of the number of donors
+      res <- vector("list", length = dim(donors)[1])
+      
+      # now the for loop
+      for (i in 1:dim(donors)[1]){
+        candid<-candidatesN %>% filter(donor == 0)
+        
+        res[[i]]<-et_points(iso = iso, # isogroup compatibility
+                            dABO = donors$bg[i], # donor's blood group
+                            dA = c(donors$A1[i],donors$A2[i]), 
+                            dB = c(donors$B1[i],donors$B2[i]), 
+                            dDR = c(donors$DR1[i],donors$DR2[i]),
+                            dage = donors$age[i], # donor's age
+                            cdata = candid, # data file with candidates
+                            month = month, # points for each month on dialysis
+                            mm0 = mm0, # points for 0 HLA mm on ETKAS points table
+                            mm1 = mm1, # points for 1 HLA mm on ET points table
+                            mm2 = mm2, # points for 2 HLA mm on ET points table
+                            mm3 = mm3, # points for 3 HLA mm on ET points table
+                            mm4 = mm4, # points for 4 HLA mm on ET points table
+                            mm5 = mm5, # points for 5 HLA mm on ET points table
+                            mm6 = mm6, # points for 6 HLA mm on ET points table
+                            df.abs = abs.d) %>% 
+          mutate(donor = donors$ID[i])
+        
+        candidatesN<-candidatesN %>% 
+          mutate(donor = case_when(ID %in% res[[i]]$ID ~ donors$ID[i],
+                                   TRUE ~ donor))
+        
+      }
+      
+      ## bind the results in the list
+      compute_resmET(do.call(rbind, res))
+      })
+    
+  })
+  
+  output$resmET <- renderDataTable({
+    compute_resmET()
+  })
+  
+  # Downloadable csv of selected dataset ----
+  output$downloadDataET <- downloadHandler(
+    filename = function() {
+      paste("ET_results", ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv2(compute_resmET(), file, row.names = FALSE, fileEncoding="latin1")
+    }
+  )
   
   
 }

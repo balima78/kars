@@ -96,12 +96,13 @@ fluidPage(theme = shinytheme("spacelab"),
                                   sliderInput("pra5", "PRA > 50%",
                                               min = 0, max = 20,
                                               value = 4, step = 1, sep = ""),
-                                  sliderInput("dialysis", "Time on dialysis (in months)",
+                                  sliderInput("dialysis", "Time on dialysis (points per month)",
                                               min = 0, max = 1,
                                               value = 0.1, step = 0.01, sep = ""),
                                   sliderInput("age_dif", "Age difference between donor and candidate",
                                               min = 0, max = 20,
                                               value = 4, step = 1, sep = ""),
+                                  h6("(points for a candidate younger than 55 and a donor older than 40 or a candidate older than 55 and a donor younger than 60)"),
                                   actionButton("reset_inputPT", "Reset inputs")
                                   )
                                 
