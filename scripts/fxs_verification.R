@@ -65,7 +65,7 @@ et_dial(dial = 301)
 
 
 ## verifying function et_points 
-candidatos<-read.csv2("files/candidates.csv")
+candidatos<-read.csv2("files/candid.csv")
 
 candidatos<-candidatos %>% mutate_at(vars(bg, A1, A2, B1, B2, DR1, DR2), as.character)
 
@@ -83,4 +83,21 @@ table(teste$abs, teste$xm)
 
 candidatos %>% left_join(teste)
 
+pt_points(cdata = ex.candidates, df.abs = ex.abs)
+
+
+
+candidatos %>% rowwise() %>% mutate(compBlood=compABO(iso = T, dABO = "A", cABO = bg))
+
+candidatos %>% rowwise() %>% 
+  mutate(pointsHLA = pt_mmHLA(dA = c("2","24"), # donor's HLA-A typing
+                              dB = c("15","44"), # donor's HLA-B typing
+                              dDR = c("1","4"), # donor's HLA-DR typing
+                              cA = c(A1,A2),
+                              cB = c(B1,B2),
+                              cDR = c(DR1,DR2)))
+
+candidatos %>% rowwise() %>% 
+  mutate(pointsAge = pt_age(cage = age)) %>% ungroup() %>% 
+  filter(pointsAge == 4)
 

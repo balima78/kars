@@ -130,3 +130,24 @@ ex.candid$MMP<-with(ex.candid,
 
 
 write.csv2(ex.candid,"candidates.csv")
+
+library(gtsummary)
+library(gt)
+teste<-pt_points(cdata= candidatos, df.abs = ex.abs, n=20) %>% 
+  select(bg, age, dialysis)  
+  tbl_summary(teste) %>% as_gt() %>% class()
+
+  
+  gt(pt_points(cdata= candidatos, df.abs = ex.abs, n=20)) %>% class()
+  
+  pt_points(cdata= candidatos, df.abs = ex.abs, n=20)
+  
+  
+  hi<-function(cPRA = cPRA, cutoff = 85){
+      res<-NULL
+      res<-if_else(cPRA > cutoff, TRUE, FALSE)
+  }
+  
+
+  candidatos %>% mutate(HI = hi(cPRA = cPRA, cutoff = 85)) %>% arrange(desc(HI))
+  

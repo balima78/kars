@@ -132,17 +132,19 @@ pt_points<-function(iso = TRUE, # isogroup compatibility
                          cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmB"],
            mmDR = mmHLA(dA = dA, dB = dB, dDR = dDR,
                          cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmDR"],
+           mmHLA = mmA + mmB + mmDR,
            pointsPRA = pt_PRA(pra80 = pra80, pra50 = pra50, cPRA),
            pointsDial = pt_dial(month = month, dialysis),
            pointsAge = pt_age(dage = dage, cage = age, points = points),
-           pointsPT = pointsHLA + pointsPRA + pointsDial + pointsAge) %>% 
+           pointsPT = pointsHLA + pointsPRA + pointsDial + pointsAge,
+           HI = hi(cPRA = cPRA, cutoff = 85)) %>% ungroup() %>% 
     filter(compBlood == TRUE & (xm == FALSE | is.na(xm))) %>% 
-    arrange(desc(pointsPT)) %>% 
+    arrange(desc(HI), desc(pointsPT)) %>% # despacho 11420/2008 
     slice(1:n) %>% 
     select(ID, bg, 
            A1, A2, B1, B2, DR1, DR2, 
-           mmA, mmB, mmDR, 
-           age, donor_age, dialysis, cPRA,
+           mmA, mmB, mmDR, mmHLA, 
+           age, donor_age, dialysis, cPRA, HI,
            pointsPT)
   
 }

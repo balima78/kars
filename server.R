@@ -8,6 +8,7 @@ source("scripts/ET_fxs.R")
 library(DT)
 library(tidyverse)
 library(openxlsx)
+library(gtsummary)
 
 function(input, output) {
   
@@ -184,6 +185,7 @@ function(input, output) {
       
       iso = input$iso
       pra80 = as.numeric(input$pra8) # points for a PRA equal or higher than 80%
+      pra50 = as.numeric(input$pra5) # points for a PRA equal or higher than 50%
       month = input$dialysis # points for each month on dialysis
       points = input$age_dif # points for age difference in PT punctuation table
       itemA = as.numeric(input$a) # points for A) on PT points table
@@ -264,6 +266,25 @@ function(input, output) {
     }
   )
   
+  ## Resume dataset results from PT algorithm
+  output$resumePT <-
+    render_gt({
+      
+      validate(
+        need(compute_resm() != "", "Results will be presented after the run!")
+      )
+      
+      tabsum<-compute_resm() %>% 
+        select(bg, age, dialysis, cPRA, HI, mmHLA) %>% 
+        rename(`Blood group` = bg,
+               `receptores' age (years)` = age,
+               `time on dialysis (months)` = dialysis,
+               `Hiper Immunized` = HI,
+               `HLA miss matchs` = mmHLA)
+      
+      tbl_summary(tabsum) %>% as_gt()
+    })
+
   
   ######################### ET algorithm #######################
   
@@ -446,5 +467,24 @@ function(input, output) {
     }
   )
   
+  
+  ## Resume dataset results from ET algorithm
+  output$resumeET <-
+    render_gt({
+      
+      validate(
+        need(compute_resmET() != "", "Results will be presented after the run!")
+      )
+      
+      tabsum<-compute_resmET() %>% 
+        select(bg, age, dialysis, cPRA, HI, mmHLA) %>% 
+        rename(`Blood group` = bg,
+               `receptores' age (years)` = age,
+               `time on dialysis (months)` = dialysis,
+               `Hiper Immunized` = HI,
+               `HLA miss matchs` = mmHLA)
+      
+      tbl_summary(tabsum) %>% as_gt()
+    })
   
 }

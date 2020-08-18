@@ -131,3 +131,11 @@ xmatch.v2<-function(dA = c("01","02"), # donor's HLA-A typing
   return(x)
 }
 
+## identify Hiper Imunized candidates according to given cutoff
+hi<-function(cPRA = cPRA, cutoff = 85){
+  res<-NULL
+  res<-if_else(cPRA > cutoff, TRUE, FALSE)
+}
+
+
+

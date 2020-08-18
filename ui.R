@@ -1,6 +1,9 @@
 library(shinythemes)
 
 library(DT)
+library(gtsummary)
+library(gt)
+library(shinycssloaders)
 
 fluidPage(theme = shinytheme("spacelab"),
           
@@ -109,52 +112,69 @@ fluidPage(theme = shinytheme("spacelab"),
                               ),
                               # Show results 
                               mainPanel(
-                                h4("Options for one donor"),
-                                fluidRow(sliderInput("dage", "Select donor's age:",
+                                radioButtons("selectionTypePT", "", 
+                                             list("One donor"= 1, 
+                                                  "Multiple donors"= 2), selected=1,
+                                             inline = TRUE),
+                                hr(),
+                                conditionalPanel(
+                                  condition = "input.selectionTypePT == '1'",
+                                  h4("Options for one donor"),
+                                  fluidRow(sliderInput("dage", "Select donor's age:",
                                                      min = 18, max = 80,
                                                      value = 60, step = 1, sep = "")
                                          ),
-                                fluidRow(column(4,
+                                  fluidRow(column(4,
                                                 radioButtons("dabo", "Select donor's blood group:",
                                                              c("A", "B", "AB", "O"),
                                                              inline = TRUE))
-                                         ),
-                                fluidRow(column(2,
-                                                textAreaInput("a1", "A1", 1,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2, 
-                                                textAreaInput("a2", "A2", 2,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2,
-                                                textAreaInput("b1", "B1", 7,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2,
-                                                textAreaInput("b2", "B2", 8,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2,
-                                                textAreaInput("dr1", "DR1", 1,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2,
-                                                textAreaInput("dr2", "DR2", 3,
-                                                              width = 50,
-                                                              height = 40))
-                                ),
-                                fluidRow(
-                                  h4("top 10 selected candidates for this specific donor"),
-                                  dataTableOutput(outputId = "res1")
-                                ),
-                                hr(),
-                                actionButton("Go","Select your options and run it!!"),
-                                h6("(it can take several seconds, be patient!)"),
-                                h4("Selected donor-recipient pairs for transplantation:"),
-                                fluidRow(dataTableOutput(outputId = "resm"),
-                                         br(),
-                                         downloadButton("downloadData", "Download"))
+                                           ),
+                                  fluidRow(h5("Input HLA typing:"),
+                                    column(2,
+                                           textAreaInput("a1", "A1", 1,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("a2", "A2", 2,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("b1", "B1", 7,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("b2", "B2", 8,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("dr1", "DR1", 1,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("dr2", "DR2", 3,
+                                                         width = 50,
+                                                         height = 40))
+                                    ),
+                                  fluidRow(
+                                    h4("top 10 selected candidates for this specific donor"),
+                                    dataTableOutput(outputId = "res1")
+                                    )
+                                  ),
+                                  conditionalPanel(
+                                    condition = "input.selectionTypePT == '2'",
+                                    actionButton("Go","Select your options and run it!!"),
+                                    h6("(it can take several seconds, be patient!)"),
+                                    h4("Selected donor-recipient pairs for transplantation:"),
+                                    fluidRow(dataTableOutput(outputId = "resm"),
+                                             br(),
+                                             downloadButton("downloadData", "Download")
+                                             ),
+                                    fluidRow(
+                                      hr(),
+                                      h4("Resumed results from PT algorithm:"),
+                                      gt_output(outputId = "resumePT") %>% withSpinner()
+                                      )
+                                    )
                               )
                      ),
                      
@@ -195,52 +215,68 @@ fluidPage(theme = shinytheme("spacelab"),
                               ),
                               
                               mainPanel(
-                                h4("Options for one donor"),
-                                fluidRow(sliderInput("dageET", "Select donor's age:",
+                                radioButtons("selectionTypeET", "", 
+                                             list("One donor"= 1, 
+                                                  "Multiple donors"= 2), selected = 1,
+                                             inline = TRUE),
+                                hr(),
+                                conditionalPanel(
+                                  condition = "input.selectionTypeET == '1'",
+                                  h4("Options for one donor"),
+                                  fluidRow(sliderInput("dageET", "Select donor's age:",
                                                      min = 18, max = 80,
                                                      value = 60, step = 1, sep = "")
-                                ),
-                                fluidRow(column(4,
+                                           ),
+                                  fluidRow(column(4,
                                                 radioButtons("daboET", "Select donor's blood group:",
                                                              c("A", "B", "AB", "O"),
                                                              inline = TRUE))
-                                ),
-                                fluidRow(column(2,
-                                                textAreaInput("a1ET", "A1", 1,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2, 
-                                                textAreaInput("a2ET", "A2", 2,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2,
-                                                textAreaInput("b1ET", "B1", 7,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2,
-                                                textAreaInput("b2ET", "B2", 8,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2,
-                                                textAreaInput("dr1ET", "DR1", 1,
-                                                              width = 50,
-                                                              height = 40)),
-                                         column(2,
-                                                textAreaInput("dr2ET", "DR2", 3,
-                                                              width = 50,
-                                                              height = 40))
-                                ),
-                                fluidRow(
-                                  h4("top 10 selected candidates for this specific donor"),
-                                  dataTableOutput(outputId = "res1ET")
-                                ),
-                                hr(),
-                                actionButton("GoET","Select your options and run it!!"),
-                                h6("(it can take several seconds, be patient!)"),
-                                h4("Selected donor-recipient pairs for transplantation:"),
-                                fluidRow(dataTableOutput(outputId = "resmET"),
-                                         br(),
-                                         downloadButton("downloadDataET", "Download")) 
+                                           ),
+                                  fluidRow(h5("Input HLA typing"),
+                                    column(2,
+                                           textAreaInput("a1ET", "A1", 1,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("a2ET", "A2", 2,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("b1ET", "B1", 7,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("b2ET", "B2", 8,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("dr1ET", "DR1", 1,
+                                                         width = 50,
+                                                         height = 40)),
+                                    column(2,
+                                           textAreaInput("dr2ET", "DR2", 3,
+                                                         width = 50,
+                                                         height = 40))
+                                    ),
+                                  fluidRow(
+                                    h4("top 10 selected candidates for this specific donor"),
+                                    dataTableOutput(outputId = "res1ET")
+                                    )
+                                  ),
+                                conditionalPanel(
+                                  condition = "input.selectionTypeET == '2'",
+                                  actionButton("GoET","Select your options and run it!!"),
+                                  h6("(it can take several seconds, be patient!)"),
+                                  h4("Selected donor-recipient pairs for transplantation:"),
+                                  fluidRow(dataTableOutput(outputId = "resmET"),
+                                           br(),
+                                           downloadButton("downloadDataET", "Download")
+                                           ),
+                                  fluidRow(hr(),
+                                           h4("Resumed results from ET algorithm:"),
+                                           gt_output(outputId = "resumeET") %>% withSpinner()
+                                           )
+                                  )
                               )
                      ),
                      

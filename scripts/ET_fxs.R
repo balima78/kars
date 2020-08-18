@@ -112,19 +112,21 @@ et_points<-function(iso = TRUE, # isogroup compatibility
                        cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmB"],
            mmDR = mmHLA(dA = dA, dB = dB, dDR = dDR,
                         cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmDR"],
+           mmHLA = mmA + mmB + mmDR,
            mm000 = ifelse(mmA + mmB + mmDR == 0, 1, 0),
            pointsDial = pt_dial(month = month, dial = dialysis),
-           pointsETx = round(pointsHLA + pointsDial + MMP)) %>%  
+           pointsETx = round(pointsHLA + pointsDial + MMP)) %>%  ungroup() %>%
     filter(compBlood == TRUE & (xm == FALSE | is.na(xm))) %>% 
     # mutate(pointsET = case_when(SP == 1 ~ dialysis,
     #                             TRUE ~ pointsETx)) %>%
-    mutate(pointsET = ifelse(SP == 1, dialysis, pointsETx)) %>% 
+    mutate(pointsET = ifelse(SP == 1, dialysis, pointsETx),
+           HI = hi(cPRA = cPRA, cutoff = 85)) %>%  
     arrange(desc(SP),desc(AM), desc(mm000), desc(pointsET)) %>%
     slice(1:n) %>%
     select(ID, bg,
            A1, A2, B1, B2, DR1, DR2,
-           mmA, mmB, mmDR,
-           age, donor_age, dialysis, cPRA,
+           mmA, mmB, mmDR, mmHLA, 
+           age, donor_age, dialysis, cPRA, HI,
            pointsET, SP, AM)
   
 
