@@ -11,7 +11,18 @@ fluidPage(theme = shinytheme("spacelab"),
           
           titlePanel("HEADS | FMUP"),
           
-          navbarPage("KARS",
+          navbarPage("KARS (version 0.0.1)",
+                     tabPanel("Home", icon = icon("home"),
+                              sidebarPanel(
+                                HTML('<p><img src="kidneys2.jpg" width=300 height=300></p>')
+                                ),
+                              mainPanel(h1("Kidney Allocation Rules Simulator (KARS)"),
+                                        br(),
+                                        br(),
+                                        h4("Disclaimer: "),
+                                        h5("This server is intended for research purposes only, not for clinical or commercial use. It is a non-profit service to the scientific community, provided on an 'AS-IS' basis without any warranty, expressed or implied. The authors can not be held liable in any way for the service provided here.")
+                                        )
+                              ),
                      tabPanel("Upload data", icon = icon("database"),
                               # select data to use
                               sidebarPanel(
@@ -103,7 +114,7 @@ fluidPage(theme = shinytheme("spacelab"),
                                               min = 0, max = 1,
                                               value = 0.1, step = 0.01, sep = ""),
                                   sliderInput("age_dif", "Age difference between donor and candidate",
-                                              min = 0, max = 20,
+                                              min = 1, max = 20,
                                               value = 4, step = 1, sep = ""),
                                   h6("(points for a candidate younger than 55 and a donor older than 40 or a candidate older than 55 and a donor younger than 60)"),
                                   actionButton("reset_inputPT", "Reset inputs")
@@ -220,6 +231,10 @@ fluidPage(theme = shinytheme("spacelab"),
                                                   "Multiple donors"= 2), selected = 1,
                                              inline = TRUE),
                                 hr(),
+                                radioButtons("hlafreqs", "Select HLA frequencies origin, to compute MMP:", 
+                                             list("PT"= 1, 
+                                                  "ET"= 2),
+                                             selected = 1, inline = TRUE),
                                 conditionalPanel(
                                   condition = "input.selectionTypeET == '1'",
                                   h4("Options for one donor"),

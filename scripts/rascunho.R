@@ -151,3 +151,36 @@ teste<-pt_points(cdata= candidatos, df.abs = ex.abs, n=20) %>%
 
   candidatos %>% mutate(HI = hi(cPRA = cPRA, cutoff = 85)) %>% arrange(desc(HI))
   
+  
+  candET<-candidatos %>% left_join(hlaAet %>% select(A,freq), by = c("A1" = "A")) %>% rename(a1=freq) %>% 
+    left_join(hlaAet %>% select(A,freq), by = c("A2" = "A")) %>% rename(a2=freq) %>% 
+    left_join(hlaBet %>% select(B,freq), by = c("B1" = "B")) %>% rename(b1=freq) %>%
+    left_join(hlaBet %>% select(B,freq), by = c("B2" = "B")) %>% rename(b2=freq) %>%
+    left_join(hlaDRet %>% select(DR,freq), by = c("DR1" = "DR")) %>% rename(dr1=freq) %>%
+    left_join(hlaDRet %>% select(DR,freq), by = c("DR2" = "DR")) %>% rename(dr2=freq) %>% 
+    left_join(abo, by = c("bg" = "abo"))%>% rename(abo=freq)
+  
+  candET$MMP2 <- with(candET,
+                    (((2*(a1+a2)*(1 - a1 - a2)) - a1^2 - a2^2 + SallA) /
+                       ((a1+a2)^2))
+                    + (((2*(b1+b2)*(1 - b1 - b2)) - b1^2 - b2^2 + SallB) /
+                         ((b1+b2)^2))
+                    + (((2*(dr1+dr2)*(1 - dr1 - dr2) ) - dr1^2 - dr2^2 + SallDR) /
+                         ((dr1+dr2)^2))
+  )
+  
+  # compute MMP0 and add it to the data file
+  candET$MMP0 <- with(candET,
+                    (a1+a2)^2 * (b1+b2)^2 * (dr1+dr2)^2)
+  
+  # compute MMP1 and add it to the data file
+  candET$MMP1 <- with(candET,
+                    MMP0 * MMP2)
+  
+  # compute MMP and add it to the data file
+  candET$MMP<-with(candET,
+                 100 * (1-(abo * (1-cPRA/100) * (MMP0 + MMP1)))^1000
+  )
+  
+  write_csv2(candET, "files/candidates.et.csv")
+  

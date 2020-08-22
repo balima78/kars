@@ -291,6 +291,19 @@ function(input, output) {
   ## compute MMP for uploaded candidates dataset
   # take uploaded dataset and compute MMP
   datasetCandsET<-reactive({
+    
+    # select HLA frequencies from PT or ET
+    if (input$hlafreqs == 1) {hlaA<-hlaApt} else {hlaA<-hlaAet}
+    if (input$hlafreqs == 1) {hlaB<-hlaBpt} else {hlaB<-hlaBet}
+    if (input$hlafreqs == 1) {hlaDR<-hlaDRpt} else {hlaDR<-hlaDRet}
+    
+    #if (input$hlafreqs == 1) {abo<-abopt} else {abo<-aboet}
+    
+    if (input$hlafreqs == 1) {SallA<-SallApt} else {SallA<-SallAet}
+    if (input$hlafreqs == 1) {SallB<-SallBpt} else {SallB<-SallBet}
+    if (input$hlafreqs == 1) {SallDR<-SallDRpt} else {SallDR<-SallDRet}
+    
+    # join allele frequencies to candidates dataset
     data<-datasetCands() %>% left_join(hlaA %>% select(A,freq), by = c("A1" = "A"))
     data<- data %>% rename(a1=freq)
     data<-data %>% left_join(hlaA %>% select(A,freq), by = c("A2" = "A"))
@@ -335,6 +348,8 @@ function(input, output) {
  
   ## for 10 first candidates selected according to unique donor 
   output$res1ET <- renderDataTable({
+    
+    if (input$hlafreqs == 1) {ex.candidates<-ex.candidates.pt} else {ex.candidates<-ex.candidates.et}
 
     if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCandsET()}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
