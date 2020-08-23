@@ -18,9 +18,14 @@ fluidPage(theme = shinytheme("spacelab"),
                                 ),
                               mainPanel(h1("Kidney Allocation Rules Simulator (KARS)"),
                                         br(),
+                                        h5("An application to simulate different kidney allocation rules for kidney allocation for transplantation."),
+                                        h5("The greatest challenge of any kidney transplant program lies in finding enough organ donors (in number and quality) for all waitlisted transplant candidates. While we wait for the future that will bring us transplantable artificial kidneys or the possibility to extend organ preservation, allowing us to substantially increase the number of quality organs from marginal donors, we must resign ourselves to a manifestly insufficient supply of organs for the current demand."),
+                                        h5("One way to evaluate the implementation of a new deceased donor kidneys’ allocation system (KAS) would be comparing two transplant candidates’ waiting lists. To one list, organs would be allocated by the rules in force, and on the other list, organs would be allocated, applying new rules in evaluation. However, this kind of study design is not feasible due to the deontological questions it raises. Alternatively, we can simulate different candidates waiting lists subjected to different organ’s allocation rules."),
+                                        h5("Before implementing new rules, it is necessary to test them in order to dissipate, as much as possible, doubts questioning implementation’s success. The development of this application had as motivation being an aid to clarify the usefulness and efficiency of new set of rules for kidney allocation."),
+                                        HTML('<p style="text-align:right">Bruno A Lima, Oficina de Bioestatística, 2020 <i class="fa fa-creative-commons"></i></p>'),
                                         br(),
                                         h4("Disclaimer: "),
-                                        h5("This server is intended for research purposes only, not for clinical or commercial use. It is a non-profit service to the scientific community, provided on an 'AS-IS' basis without any warranty, expressed or implied. The authors can not be held liable in any way for the service provided here.")
+                                        h5("This application is intended for research purposes only, not for clinical or commercial use. It is a non-profit service to the scientific community, provided on an 'AS-IS' basis without any warranty, expressed or implied. The authors can not be held liable in any way for the service provided here.")
                                         )
                               ),
                      tabPanel("Upload data", icon = icon("database"),
@@ -78,7 +83,7 @@ fluidPage(theme = shinytheme("spacelab"),
                               )
                               
                      ),
-                     tabPanel("Portugal", icon = icon("heartbeat"),
+                     tabPanel("Portugal", icon = icon("medrt"),
                               
                               # Sidebar with options 
                               sidebarPanel(
@@ -189,7 +194,7 @@ fluidPage(theme = shinytheme("spacelab"),
                               )
                      ),
                      
-                     tabPanel("EuroTransplant", icon = icon("medkit"),
+                     tabPanel("EuroTransplant", icon = icon("medkit"), #
                               sidebarPanel(
                                 shinyjs::useShinyjs(),
                                 id = "side-panelET",
@@ -232,8 +237,8 @@ fluidPage(theme = shinytheme("spacelab"),
                                              inline = TRUE),
                                 hr(),
                                 radioButtons("hlafreqs", "Select HLA frequencies origin, to compute MMP:", 
-                                             list("PT"= 1, 
-                                                  "ET"= 2),
+                                             list("Portugal"= 1, 
+                                                  "EuroTransplant"= 2),
                                              selected = 1, inline = TRUE),
                                 conditionalPanel(
                                   condition = "input.selectionTypeET == '1'",
@@ -295,7 +300,7 @@ fluidPage(theme = shinytheme("spacelab"),
                               )
                      ),
                      
-                     tabPanel("Lima", icon = icon("file-medical-alt"),
+                     tabPanel("Lima", icon = icon("globe"), # file-medical-alt
                               sidebarPanel(
                                 radioButtons("dataInput", "", 
                                              list("Load example data"=1, "Upload a file"=2), 
