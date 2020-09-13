@@ -184,3 +184,22 @@ teste<-pt_points(cdata= candidatos, df.abs = ex.abs, n=20) %>%
   
   write_csv2(candET, "files/candidates.et.csv")
   
+  
+  summary(ex.candidates.pt$dialysis)
+  
+  
+  lima_order(iso = TRUE, # isogroup compatibility
+             dABO = "A", # donor's blood group
+             dA = c("1","2"), dB = c("15","44"), dDR = c("1","4"), # donor's HLA typing'
+             dage = 66, # donor's age
+             cdata = ex.candidates, # data file with candidates
+             df.abs = ex.abs, # data frame with candidates' HLA antibodies
+             n = 2)
+
+identical(
+  ex.candidates %>% rowwise() %>% mutate(x =lima_sp(dage = 50, cage = age))  %>% select(ID,age,x) %>% ungroup(),
+  ex.candidates %>% mutate(x =lima_sp(dage = 50, cage = age))  %>% select(ID,age,x))
+
+  lima_sp(dage = 50, cage = 50)
+  
+                           

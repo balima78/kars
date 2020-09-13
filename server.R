@@ -4,6 +4,7 @@ source("scripts/read_data.R")
 source("scripts/compat_fxs.R")
 source("scripts/PT_fxs.R")
 source("scripts/ET_fxs.R")
+source("scripts/Lima_fxs.R")
 
 library(DT)
 library(tidyverse)
@@ -501,5 +502,49 @@ function(input, output) {
       
       tbl_summary(tabsum) %>% as_gt()
     })
+  
+  
+  ############################ LIMA algorithm ###################
+  
+  #### to reset PT sidebarpanel
+  observeEvent(input$reset_inputLIMA, {
+    shinyjs::reset("side-panelLima")
+  })
+  
+  
+  output$res1LIMA <- renderDataTable({
+    
+    if (input$dataInput == 1) {candidates<-ex.candidates %>% 
+      select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands()}
+    if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
+    
+    validate(
+      need(candidates != "", "Please select a candidates data set!")
+    )
+    
+    validate(
+      need(abs.d != "", "Please select candidates' HLA antibodies data set!")
+    )
+    
+    candidates<-candidates %>% mutate(color = case_when(cPRA >= 85 | dialysis >= input$td3q ~ "orange",
+                                                        cPRA >= 50 | dialysis >= input$td2q ~ "yellow",
+                                                        TRUE ~ "green"),
+                                      color = fct_relevel(color,"orange","yellow","green")
+                                      )
+    
+    dt<-lima_order(iso = input$isoLIMA, # isogroup compatibility
+                   dABO = input$daboLIMA, # donor's blood group
+                   dA = c(input$a1LIMA,input$a2LIMA),
+                   dB = c(input$b1LIMA,input$b2LIMA),
+                   dDR = c(input$dr1LIMA,input$dr2LIMA),
+                   dage = input$dageLIMA, # donor's age
+                   cdata = candidates, # data file with candidates
+                   df.abs = abs.d, # candidates' HLA antibodies
+                   n = 10)
+    
+    datatable(dt, options = list(pageLength = 5, dom = 'tip'))
+    
+    })
+    
   
 }

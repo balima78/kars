@@ -1,4 +1,5 @@
 library(shinythemes)
+library(shinybusy)
 
 library(DT)
 library(gtsummary)
@@ -178,6 +179,7 @@ fluidPage(theme = shinytheme("spacelab"),
                                   ),
                                   conditionalPanel(
                                     condition = "input.selectionTypePT == '2'",
+                                    add_busy_spinner(spin = "fading-circle", position = "full-page"),
                                     actionButton("Go","Select your options and run it!!"),
                                     h6("(it can take several seconds, be patient!)"),
                                     h4("Selected donor-recipient pairs for transplantation:"),
@@ -285,6 +287,7 @@ fluidPage(theme = shinytheme("spacelab"),
                                   ),
                                 conditionalPanel(
                                   condition = "input.selectionTypeET == '2'",
+                                  add_busy_spinner(spin = "fading-circle", position = "full-page"),
                                   actionButton("GoET","Select your options and run it!!"),
                                   h6("(it can take several seconds, be patient!)"),
                                   h4("Selected donor-recipient pairs for transplantation:"),
@@ -300,28 +303,88 @@ fluidPage(theme = shinytheme("spacelab"),
                               )
                      ),
                      
-                     tabPanel("Lima", icon = icon("globe"), # file-medical-alt
+                     tabPanel("Lima et al", icon = icon("globe"), # file-medical-alt
                               sidebarPanel(
-                                radioButtons("dataInput", "", 
-                                             list("Load example data"=1, "Upload a file"=2), 
-                                             selected=1),
-                                conditionalPanel(condition="input.dataInput=='1'",
-                                                 h5("texto de exemplo")
+                                shinyjs::useShinyjs(),
+                                id = "side-panelLima",
+                                a("Define values for Lima's algorithm:"),
+                                wellPanel(
+                                  checkboxInput("isoLIMA", "ABO identical", TRUE),
+                                  numericInput("td3q", "3rd quantile time on dialysis", 62,
+                                               1, 99, 1),
+                                  numericInput("td2q", "median time on dialysis", 48,
+                                               1, 99, 1),
+                                  actionButton("reset_inputLIMA", "Reset inputs")
+                                  
                                 ),
-                                conditionalPanel(condition="input.dataInput=='2'",
-                                                 HTML('<br>'),
-                                                 h5("Upload a delimited text file (max. 10MB): "),
-                                                 #HTML('<i class="fa fa-beer fa-lg"></i>'),
-                                                 fileInput("upload", "", multiple = FALSE),
-                                                 radioButtons("fileSepDF", "Delimiter:", list("Comma"=1, "Tab"=2, "Semicolon"=3, "Space"=4),selected=2),
-                                                 
-                                                 conditionalPanel(condition="input.fileSepDF!='1'",
-                                                                  checkboxInput(inputId = "decimal", label = "Use comma as decimal", value = FALSE)
-                                                 ),
-                                                 
-                                                 HTML('<br>'),
-                                                 HTML('<p>You can upload your data as separated by comma, tab, semicolon or space.</p>'),
-                                                 HTML('<p><b>Note</b>: First row must be header.</p>')
+                                HTML('<p><img src="ColorSystem.jpg" width=300 height=300></p>'),
+                                a(href="http://www.bbg01.com/cdn/clientes/spnefro/pjnh/46/artigo_14.pdf", 
+                                  "Bruno A. Lima, Miguel Mendes, Helena Alves. Kidney transplant allocation in Portugal. Port J Nephrol Hypert, 27(4), 2013: 313-316"),
+                              ),
+                              
+                              mainPanel(
+                                radioButtons("selectionTypeLIMA", "", 
+                                             list("One donor"= 1, 
+                                                  "Multiple donors"= 2), selected = 1,
+                                             inline = TRUE),
+                                
+                                conditionalPanel(
+                                  condition = "input.selectionTypeLIMA == '1'",
+                                  h4("Options for one donor"),
+                                  fluidRow(sliderInput("dageLIMA", "Select donor's age:",
+                                                       min = 18, max = 80,
+                                                       value = 60, step = 1, sep = "")
+                                  ),
+                                  fluidRow(column(4,
+                                                  radioButtons("daboLIMA", "Select donor's blood group:",
+                                                               c("A", "B", "AB", "O"),
+                                                               inline = TRUE))
+                                  ),
+                                  fluidRow(h5("Input HLA typing"),
+                                           column(2,
+                                                  textAreaInput("a1LIMA", "A1", 1,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("a2LIMA", "A2", 2,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("b1LIMA", "B1", 7,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("b2LIMA", "B2", 8,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("dr1LIMA", "DR1", 1,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("dr2LIMA", "DR2", 3,
+                                                                width = 50,
+                                                                height = 40))
+                                  ),
+                                  fluidRow(
+                                    h4("top 10 selected candidates for this specific donor"),
+                                    dataTableOutput(outputId = "res1LIMA")
+                                  )
+                                ),
+                                conditionalPanel(
+                                  condition = "input.selectionTypeLIMA == '2'",
+                                  add_busy_spinner(spin = "fading-circle", position = "full-page"),
+                                  actionButton("GoLIMA","Select your options and run it!!"),
+                                  h6("(it can take several seconds, be patient!)"),
+                                  h4("Selected donor-recipient pairs for transplantation:"),
+                                  # fluidRow(dataTableOutput(outputId = "resmLIMA"),
+                                  #          br(),
+                                  #          downloadButton("downloadDataLIMA", "Download")
+                                  # ),
+                                  fluidRow(hr(),
+                                           h4("Resumed results from Lima's algorithm:")#,
+                                           #gt_output(outputId = "resumeLIMA") %>% withSpinner()
+                                  )
                                 )
                               )
                      ),
