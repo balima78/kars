@@ -545,6 +545,112 @@ function(input, output) {
     datatable(dt, options = list(pageLength = 5, dom = 'tip'))
     
     })
+  
+  ## compute nultiple results for ET algorithm
+  compute_resmLIMA <- reactiveVal()
+  
+  observeEvent(input$GoLIMA, {
     
+    compute_resmLIMA(NULL)
+    
+    withProgress(message = 'Calculation in progress, be patient!', {
+      for(i in 1:N){
+        # Long Running Task
+        Sys.sleep(1)
+        # Update progress
+        incProgress(1/N)
+      }
+      
+      iso = input$isoLIMA
+      
+      if (input$dataInput == 1) {candidates<-ex.candidates %>% 
+        select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands()}
+      if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
+      if (input$dataInput == 1) {donors<-ex.donors} else {donors<-datasetDonors()}
+      
+      validate(
+        need(candidates != "", "Please select a candidates data set!")
+      )
+      
+      validate(
+        need(abs.d != "", "Please select candidates' HLA antibodies data set!")
+      )
+      
+      validate(
+        need(donors != "", "Please select donors' data set!")
+      )
+      
+      # add colors column
+      candidates<-candidates %>% mutate(color = case_when(cPRA >= 85 | dialysis >= input$td3q ~ "orange",
+                                                          cPRA >= 50 | dialysis >= input$td2q ~ "yellow",
+                                                          TRUE ~ "green"),
+                                        color = fct_relevel(color,"orange","yellow","green")
+                                        )
+      # add a column to candidates' file to update respective donors
+      candidatesN<-candidates %>% mutate(donor = 0)
+      
+      # create a list with the same length of the number of donors
+      res <- vector("list", length = dim(donors)[1])
+      
+      # now the for loop
+      for (i in 1:dim(donors)[1]){
+        candid<-candidatesN %>% filter(donor == 0)
+        
+        res[[i]]<-lima_order(iso = iso, # isogroup compatibility
+                             dABO = donors$bg[i], # donor's blood group
+                             dA = c(donors$A1[i],donors$A2[i]), 
+                             dB = c(donors$B1[i],donors$B2[i]), 
+                             dDR = c(donors$DR1[i],donors$DR2[i]), # donor's HLA typing'
+                             dage = donors$age[i], # donor's age
+                             cdata = candid, # data file with candidates
+                             df.abs = abs.d, # data frame with candidates' HLA antibodies
+                             n = 2 # slice first n rows
+                             ) %>% 
+          mutate(donor = donors$ID[i])
+        
+        candidatesN<-candidatesN %>%
+          mutate(donor = case_when(ID %in% res[[i]]$ID ~ donors$ID[i],
+                                   TRUE ~ donor))
+        
+      }
+      
+      ## bind the results in the list
+      compute_resmLIMA(do.call(rbind, res))
+    })
+    })
+  
+  output$resmLIMA <- renderDataTable({
+    compute_resmLIMA()
+  })
+  
+  # Downloadable csv of selected dataset ----
+  output$downloadDataLIMA <- downloadHandler(
+    filename = function() {
+      paste("LIMA_results", ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv2(compute_resmLIMA(), file, row.names = FALSE, fileEncoding="latin1")
+    }
+  )
+  
+  ## Resume dataset results from LIMA algorithm
+  output$resumeLIMA <-
+    render_gt({
+      
+      validate(
+        need(compute_resmLIMA() != "", "Results will be presented after the run!")
+      )
+      
+      tabsum<-compute_resmLIMA() %>% 
+        select(bg, age, dialysis, cPRA, HI, mmHLA) %>% 
+        rename(`Blood group` = bg,
+               `receptores' age (years)` = age,
+               `time on dialysis (months)` = dialysis,
+               `Hiper Immunized` = HI,
+               `HLA miss matchs` = mmHLA)
+      
+      tbl_summary(tabsum) %>% as_gt()
+    })
   
 }
+
