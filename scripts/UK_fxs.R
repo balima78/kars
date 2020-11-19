@@ -1,7 +1,7 @@
 ## UK algorithm functions ##
 
 # matchability score:
-# counting number of donors per candidate,
+# counting number of matched donors per candidate,
 # blood group identical & HLA compatible
 # HLA mismatch level 1 or 2
 
