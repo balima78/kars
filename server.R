@@ -652,5 +652,39 @@ function(input, output) {
       tbl_summary(tabsum) %>% as_gt()
     })
   
+  ############################
+  ### UK Transplant
+  ############################
+
+  # Donor-recipient risk index combinations
+  multiplyer<-reactive({input$multipleUK})
+  
+  output$tableDRriskUK <- renderDT({
+    dt<-data.frame(R1=c(1000,700,350,0),
+                   R2=c(700,1000,500,350),
+                   R3=c(350,500,1000,700),
+                   R4=c(0,350,700,1000))
+    rownames(dt)<-c("D1","D2","D3","D4")
+    
+    datatable(dt * multiplyer(),
+              selection = 'single', escape=FALSE,
+              options = list(searching = FALSE, dom = 't'))
+  })
+  
+  # Matchability - illustrative plot
+  pointsM<-reactive({
+    input$mUK * (1 + ((1:9) / input$nUK)^input$oUK)
+  })
+  output$matchability<-renderPlot({
+    ggplot(data.frame(Points = pointsM(), MatchScore = 1:9)) +
+      geom_line(aes(MatchScore,Points)) + 
+      ggtitle("Points scored illustration")
+  })
+  
+  #### to reset PT sidebarpanel
+  observeEvent(input$reset_inputUK, {
+    shinyjs::reset("side-panelUK")
+  })
+  
 }
 

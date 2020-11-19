@@ -202,4 +202,23 @@ identical(
 
   lima_sp(dage = 50, cage = 50)
   
-                           
+
+age<-seq(1:80)                           
+l1<-1200*cos(age/18) + 2300
+l2<-750*cos(age/18) + 1500
+l3<-400*sin(age/50)
+
+df<-data.frame(age,l1,l2,l3)
+ggplot(df,aes(age,l1, color = "red")) + geom_line() +
+  geom_line(aes(y=l2, color = "green")) + 
+  geom_line(aes(y=l3, color = "blue")) +
+  scale_color_discrete(name = "L series", labels = c("l1","l2","l3"))
+
+
+library(DT)
+dt<-data.frame(R1=c(1000,700,350,0),
+               R2=c(700,1000,500,350),
+               R3=c(350,500,1000,700),
+               R4=c(0,350,700,1000))
+rownames(dt)<-c("D1","D2","D3","D4")
+datatable(dt*2)

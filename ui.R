@@ -391,18 +391,147 @@ fluidPage(theme = shinytheme("spacelab"),
                      
                      tabPanel("UK transplant", icon = icon("user-md"),
                               sidebarPanel(
-                                a("xxxx"),
+                                shinyjs::useShinyjs(),
+                                id = "side-panelUK",
+                                a("Define values for UK Transplant:"),
                                 wellPanel(
-                                  sliderInput("anoH", "Seleccione intervalo:",
-                                              min = 2000, max = 2018, step = 1, sep = "",
-                                              value = c(2000,2018))
-                                )
-                              ),
+                                  checkboxInput("isoUK", "ABO identical", TRUE),
+                                  
+                                  sliderInput("tdUK", "Time on dialysis (points per day)",
+                                              min = 0.1, max = 3,
+                                              value = 1, step = 0.1, sep = ""),
+                                  
+                                  sliderInput("multipleUK", "multiplyer for Donor-recipient risk matrix:",
+                                              min = 0.1, max = 2,
+                                              value = 1, step = 0.1, sep = ""),
+                                  DTOutput('tableDRriskUK'),
+                                  h5("Donor-Recipient risk index combinations."),
+                                  
+                                  sliderInput("b1UK", "b1",
+                                              min = 1000, max = 2000,
+                                              value = 1200, step = 100, sep = ""),
+                                  sliderInput("a1UK", "a1",
+                                              min = 2000, max = 3000,
+                                              value = 2300, step = 100, sep = ""),
+                                  sliderInput("b2UK", "b2",
+                                              min = 100, max = 1000,
+                                              value = 750, step = 50, sep = ""),
+                                  sliderInput("a2UK", "a2",
+                                              min = 1000, max = 2000,
+                                              value = 1500, step = 100, sep = ""),
+                                  sliderInput("b3UK", "b3",
+                                              min = 100, max = 1000,
+                                              value = 400, step = 100, sep = ""),
+                                  h5("HLA match and age combined"),
+                                  h6("For each HLA mismatch level, points are defined as:"),
+                                  h6("Level1 = b1*COS(age/18)+a1"),
+                                  h6("Level2 = b2*COS(age/18)+a2"),
+                                  h6("Level3+4 = b3*COS(age/18)"),
+                                  
+                                  sliderInput("mUK", "m",
+                                              min = 10, max = 100,
+                                              value = 40, step = 10, sep = ""),
+                                  sliderInput("nUK", "n",
+                                              min = 1, max = 10,
+                                              value = 4.5, step = 0.1, sep = ""),
+                                  sliderInput("oUK", "o",
+                                              min = 1, max = 10,
+                                              value = 4.7, step = 0.1, sep = ""),
+                                  h5("Matchability"),
+                                  h6("Points are defined as:"),
+                                  h6("m * (1 + (Match score / n)^o)"),
+                                  plotOutput("matchability"),
+                                  
+                                  sliderInput("mm0UK", "Total HLA mismatch = 0",
+                                              min = -100, max = 100,
+                                              value = 0, step = 50, sep = ""),
+                                  sliderInput("mm1UK", "Total HLA mismatch = 1",
+                                              min = -500, max = 0,
+                                              value = -100, step = 50, sep = ""),
+                                  sliderInput("mm2UK", "Total HLA mismatch = 2-3",
+                                              min = -500, max = 0,
+                                              value = -150, step = 50, sep = ""),
+                                  sliderInput("mm3UK", "Total HLA mismatch = 4-6",
+                                              min = -500, max = 0,
+                                              value = -250, step = 50, sep = ""),
+                                              
+                                  sliderInput("bloodUK", "Blood group match",
+                                              min = -2000, max = -100,
+                                              value = -1000, step = 100, sep = ""),
+                                  h6("negative points are allocate for blood group B candidates when the donor is group O (Tier B only)"),
+                                  
+                                  actionButton("reset_inputUK", "Reset inputs")
+                                  )
+                                ),
                               
-                              mainPanel()
+                              mainPanel(
+                                radioButtons("selectionTypeUK", "", 
+                                             list("One donor"= 1, 
+                                                  "Multiple donors"= 2), selected = 1,
+                                             inline = TRUE),
+                                
+                                conditionalPanel(
+                                  condition = "input.selectionTypeUK == '1'",
+                                  h4("Options for one donor"),
+                                  fluidRow(sliderInput("dageUK", "Select donor's age:",
+                                                       min = 18, max = 80,
+                                                       value = 60, step = 1, sep = "")
+                                  ),
+                                  fluidRow(column(4,
+                                                  radioButtons("daboUK", "Select donor's blood group:",
+                                                               c("A", "B", "AB", "O"),
+                                                               inline = TRUE))
+                                  ),
+                                  fluidRow(h5("Input HLA typing"),
+                                           column(2,
+                                                  textAreaInput("a1UK", "A1", 1,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("a2UK", "A2", 2,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("b1UK", "B1", 7,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("b2UK", "B2", 8,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("dr1UK", "DR1", 1,
+                                                                width = 50,
+                                                                height = 40)),
+                                           column(2,
+                                                  textAreaInput("dr2UK", "DR2", 3,
+                                                                width = 50,
+                                                                height = 40))
+                                  ),
+                                  fluidRow(
+                                    h4("top 10 selected candidates for this specific donor"),
+                                    #dataTableOutput(outputId = "res1UK")
+                                  )
+                                ),
+                                conditionalPanel(
+                                  condition = "input.selectionTypeUK == '2'",
+                                  add_busy_spinner(spin = "fading-circle", position = "full-page"),
+                                  actionButton("GoUK","Select your options and run it!!"),
+                                  h6("(it can take several seconds, be patient!)"),
+                                  h4("Selected donor-recipient pairs for transplantation:")#,
+                                  # fluidRow(dataTableOutput(outputId = "resmUK"),
+                                  #          br(),
+                                  #          downloadButton("downloadDataUK", "Download")
+                                  # ),
+                                  # fluidRow(hr(),
+                                  #          h4("Resumed results from UK Transplant:"),
+                                  #          gt_output(outputId = "resumeUK") %>% withSpinner()
+                                  # )
+                                )
+                              )
                      ),
                      
-                     tabPanel("Material e Métodos", icon = icon("cogs"),
+                     tabPanel("Material and Methods", icon = icon("cogs"),
                               h5("Aqui ficarão descritos os algoritmos utilizados, bem como o tipo de dados")
                      )
           )
