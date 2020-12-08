@@ -5,6 +5,7 @@ source("scripts/compat_fxs.R")
 source("scripts/PT_fxs.R")
 source("scripts/ET_fxs.R")
 source("scripts/Lima_fxs.R")
+source("scripts/UK_fxs.R")
 
 library(DT)
 library(tidyverse)
@@ -15,7 +16,7 @@ function(input, output) {
   
   output$ex.cands<- renderDataTable({
     
-    datatable(ex.candidates %>%
+    datatable(ex.candidates.pt %>%
                 select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA),
               rownames = FALSE)
   })
@@ -128,7 +129,7 @@ function(input, output) {
   
   output$res1 <- renderDataTable({
     
-    if (input$dataInput == 1) {candidates<-ex.candidates %>% 
+    if (input$dataInput == 1) {candidates<-ex.candidates.pt %>% 
       select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands()}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     
@@ -195,7 +196,7 @@ function(input, output) {
       itemD = as.numeric(input$d) # points for D) on PT points table
       itemE = as.numeric(input$e) # points for E) on PT points table
    
-    if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCands()}
+    if (input$dataInput == 1) {candidates<-ex.candidates.pt} else {candidates<-datasetCands()}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     if (input$dataInput == 1) {donors<-ex.donors} else {donors<-datasetDonors()}
     
@@ -506,7 +507,7 @@ function(input, output) {
   
   ############################ LIMA algorithm ###################
   
-  #### to reset PT sidebarpanel
+  #### to reset LIMA sidebarpanel
   observeEvent(input$reset_inputLIMA, {
     shinyjs::reset("side-panelLima")
   })
@@ -514,7 +515,7 @@ function(input, output) {
   
   output$res1LIMA <- renderDataTable({
     
-    if (input$dataInput == 1) {candidates<-ex.candidates %>% 
+    if (input$dataInput == 1) {candidates<-ex.candidates.pt %>% 
       select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands()}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     
@@ -546,7 +547,7 @@ function(input, output) {
     
     })
   
-  ## compute nultiple results for ET algorithm
+  ## compute nultiple results for LIMA algorithm
   compute_resmLIMA <- reactiveVal()
   
   observeEvent(input$GoLIMA, {
@@ -684,6 +685,94 @@ function(input, output) {
   #### to reset PT sidebarpanel
   observeEvent(input$reset_inputUK, {
     shinyjs::reset("side-panelUK")
+  })
+  
+  
+  ############################ UK algorithm ###################
+  
+  #### to reset UK sidebarpanel
+  observeEvent(input$reset_inputUK, {
+    shinyjs::reset("side-panelUK")
+  })
+  
+  ## compute DRI for one donor
+  driv<-reactive({
+    exp(0.023 * (input$dageUK-50) +
+          -0.152 * ((input$dheightUK - 170) / 10) +
+          0.149 * ifelse(input$dhtUK == 'Yes', 1, 0) +
+          -0.184 * ifelse(input$dsexUK == 'Female', 1, 0) +
+          0.19 * ifelse(input$dcmvUK == 'Yes', 1, 0) +
+          -0.023 * (input$dgfrUK-90)/10 +
+          0.015 * input$dhospUK
+    )
+ 
+  })
+  
+  output$dri<-renderText({
+   paste("DRI is:", round(driv(),2), "; the donor belong to", 
+         ifelse(driv() <= 0.79, "D1",
+                ifelse(driv() <= 1.12,"D2",
+                       ifelse(driv() <= 1.5,"D3","D4"))))
+    })
+  
+  
+  output$res1UK <- renderDataTable({
+    
+    if (input$dataInput == 1) {candidates<-ex.candidates.uk} else {candidates<-datasetCands()}
+    if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
+    
+    validate(
+      need(candidates != "", "Please select a candidates data set!")
+    )
+    
+    validate(
+      need(abs.d != "", "Please select candidates' HLA antibodies data set!")
+    )
+    
+    dt<-uk_points(DRI = ifelse(driv() <= 0.79, "D1",
+                               ifelse(driv() <= 1.12,"D2",
+                                      ifelse(driv() <= 1.5,"D3","D4"))), # Donor RisK Index group
+                  dA = c(input$a1UK,input$a2UK), # donor's HLA typing'
+                  dB = c(input$b1UK,input$b2UK),
+                  dDR = c(input$dr1UK,input$dr2UK),
+                  dABO = input$daboUK, # donors' blood group
+                  dage = input$dageUK, # donors' age
+                  cdata = candidates, # data file with candidates
+                  D1R1 = 1000,
+                  D1R2 = 700,
+                  D1R3 = 350,
+                  D1R4 = 0,
+                  D2R1 = 700,
+                  D2R2 = 1000,
+                  D2R3 = 500,
+                  D2R4 = 350,
+                  D3R1 = 350,
+                  D3R2 = 500, 
+                  D3R3 = 1000,
+                  D3R4 = 700,
+                  D4R1 = 0,
+                  D4R2 = 350,
+                  D4R3 = 700,
+                  D4R4 = 1000,
+                  ptsDial = input$tdUK,
+                  a1 = input$aa1UK, # value on HLA match and age combined formula
+                  a2 = input$aa2UK, # value on HLA match and age combined formula
+                  b1 = input$bb1UK, # value on HLA match and age combined formula
+                  b2 = input$bb2UK, # value on HLA match and age combined formula
+                  b3 = input$bb3UK, # value on HLA match and age combined formula
+                  m = input$mUK, # matchability formula
+                  nn = input$nUK, # matchability formula
+                  o = input$oUK, # matchability formula
+                  mm1 = as.numeric(input$mm1UK), # substrating points for 1 mm
+                  mm23 = as.numeric(input$mm23UK), # substrating points for 2-3 mm 
+                  mm46 = as.numeric(input$mm46UK), # substrating points for 4-6 mm
+                  pts = input$bloodUK, # substrating points for B blood group
+                  df.abs = ex.abs, # data frame with candidates' HLA antibodies
+                  n = 10 # slice first n rows
+    )
+
+    datatable(head(dt), options = list(pageLength = 5, dom = 'tip'))
+    
   })
   
 }
