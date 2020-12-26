@@ -37,7 +37,7 @@ set.seed(1)
 ex.candidates.uk$MS<-sample(1:10, 
                             size = 500, 
                             replace = T, 
-                            prob = c(0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1))
+                            prob = c(0.12,0.12,0.11,0.11,0.11,0.1,0.1,0.1,0.1,0.03))
 # compute column Tier with options A (MS = 10 OR cPRA = 100% OR dialysis >= 84) or B (others)
 set.seed(1)
 ex.candidates.uk<-ex.candidates.uk %>% 
@@ -54,8 +54,6 @@ ex.candidates.uk<-ex.candidates.uk %>%
                          rri <= 1.2 ~ 'R3',
                          TRUE ~ 'R4') # compute Recipient Risk Index from 'rri'
          )
-
-
 ## candidates HLA antibodies
 # file example
 ex.abs <- read_csv2("files/abs.csv")

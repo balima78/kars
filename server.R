@@ -29,6 +29,9 @@ function(input, output) {
               rownames = FALSE)
   })
   
+  # reactive to the input UK files
+  ukf<-reactive(input$ukfiles)
+  
   # read candidates' file
   datasetCands <- reactive({
     
@@ -47,8 +50,9 @@ function(input, output) {
     
      
     validate(
-      need(identical(colnames(data),c("ID","bg","A1","A2","B1","B2","DR1","DR2","age","dialysis","cPRA")), 
-           "Candidates column names are not identical to example data!")
+      if(ukf() == 1){need(identical(colnames(data),c("ID","bg","A1","A2","B1","B2","DR1","DR2","age","dialysis","cPRA", "Tier", "MS", "RRI")), 
+                             "Candidates column names are not the necessary for UK algorithm!")} else {need(identical(colnames(data),c("ID","bg","A1","A2","B1","B2","DR1","DR2","age","dialysis","cPRA")), 
+           "Candidates column names are not identical to example data!")}
       )
     
     data %>% 
@@ -76,8 +80,12 @@ function(input, output) {
     
     
     validate(
+      if(ukf() == 1){
+        need(identical(colnames(data),c(colnames(ex.donors),"DRI")), 
+             "Donors column names are not the necessary for UK algorithm!")
+      } else {
       need(identical(colnames(data),colnames(ex.donors)), 
-           "Donors column names are not identical to example data!")
+           "Donors column names are not identical to example data!")}
     )
     
     data %>% 
@@ -125,12 +133,18 @@ function(input, output) {
     datasetDonors() %>% datatable(rownames = FALSE)
   })
   
-## for 10 best candidates selected according to unique donor 
+
+  ############################
+  ### PT algorithm
+  ############################
+ 
+  ## for 10 best candidates selected according to unique donor 
   
   output$res1 <- renderDataTable({
     
     if (input$dataInput == 1) {candidates<-ex.candidates.pt %>% 
-      select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands()}
+      select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands() %>% 
+        select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     
     validate(
@@ -196,7 +210,8 @@ function(input, output) {
       itemD = as.numeric(input$d) # points for D) on PT points table
       itemE = as.numeric(input$e) # points for E) on PT points table
    
-    if (input$dataInput == 1) {candidates<-ex.candidates.pt} else {candidates<-datasetCands()}
+    if (input$dataInput == 1) {candidates<-ex.candidates.pt} else {candidates<-datasetCands() %>% 
+      select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     if (input$dataInput == 1) {donors<-ex.donors} else {donors<-datasetDonors()}
     
@@ -288,7 +303,9 @@ function(input, output) {
     })
 
   
-  ######################### ET algorithm #######################
+  ############################
+  ### ET algorithm
+  ############################
   
   ## compute MMP for uploaded candidates dataset
   # take uploaded dataset and compute MMP
@@ -505,7 +522,9 @@ function(input, output) {
     })
   
   
-  ############################ LIMA algorithm ###################
+  ############################
+  ### Lima algorithm
+  ############################
   
   #### to reset LIMA sidebarpanel
   observeEvent(input$reset_inputLIMA, {
@@ -516,7 +535,8 @@ function(input, output) {
   output$res1LIMA <- renderDataTable({
     
     if (input$dataInput == 1) {candidates<-ex.candidates.pt %>% 
-      select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands()}
+      select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands() %>% 
+        select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     
     validate(
@@ -547,7 +567,7 @@ function(input, output) {
     
     })
   
-  ## compute nultiple results for LIMA algorithm
+  ## compute multiple results for LIMA algorithm
   compute_resmLIMA <- reactiveVal()
   
   observeEvent(input$GoLIMA, {
@@ -565,7 +585,8 @@ function(input, output) {
       iso = input$isoLIMA
       
       if (input$dataInput == 1) {candidates<-ex.candidates %>% 
-        select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands()}
+        select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands() %>% 
+          select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)}
       if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
       if (input$dataInput == 1) {donors<-ex.donors} else {donors<-datasetDonors()}
       
@@ -658,7 +679,7 @@ function(input, output) {
   ############################
 
   # Donor-recipient risk index combinations
-  multiplyer<-reactive({input$multipleUK})
+  # multiplyer<-reactive({input$multipleUK})
   
   output$tableDRriskUK <- renderDT({
     dt<-data.frame(R1=c(1000,700,350,0),
@@ -667,7 +688,7 @@ function(input, output) {
                    R4=c(0,350,700,1000))
     rownames(dt)<-c("D1","D2","D3","D4")
     
-    datatable(dt * multiplyer(),
+    datatable(dt * 1, # multiplyer()
               selection = 'single', escape=FALSE,
               options = list(searching = FALSE, dom = 't'))
   })
@@ -682,18 +703,13 @@ function(input, output) {
       ggtitle("Points scored illustration")
   })
   
-  #### to reset PT sidebarpanel
+  #### to reset UK sidebarpanel
   observeEvent(input$reset_inputUK, {
     shinyjs::reset("side-panelUK")
   })
   
   
   ############################ UK algorithm ###################
-  
-  #### to reset UK sidebarpanel
-  observeEvent(input$reset_inputUK, {
-    shinyjs::reset("side-panelUK")
-  })
   
   ## compute DRI for one donor
   driv<-reactive({
@@ -718,7 +734,8 @@ function(input, output) {
   
   output$res1UK <- renderDataTable({
     
-    if (input$dataInput == 1) {candidates<-ex.candidates.uk} else {candidates<-datasetCands()}
+    if (input$dataInput == 1) {candidates<-ex.candidates.uk} else {candidates<-datasetCands()%>% 
+      select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA, Tier, MS, RRI)}
     if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
     
     validate(
@@ -771,9 +788,140 @@ function(input, output) {
                   n = 10 # slice first n rows
     )
 
-    datatable(head(dt), options = list(pageLength = 5, dom = 'tip'))
+    datatable(dt, options = list(pageLength = 5, dom = 'tip'))
     
   })
+  
+  ## compute nultiple results for UK algorithm
+  compute_resmUK <- reactiveVal()
+  
+  observeEvent(input$GoUK, {
+    
+    compute_resmUK(NULL)
+    
+    withProgress(message = 'Calculation in progress, be patient!', {
+      for(i in 1:N){
+        # Long Running Task
+        Sys.sleep(1)
+        # Update progress
+        incProgress(1/N)
+      }
+      
+      
+      if (input$dataInput == 1) {candidates<-ex.candidates.uk %>% 
+        select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA,
+               Tier, RRI, MS)} else {candidates<-datasetCands()}
+      if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
+      if (input$dataInput == 1) {donors<-ex.donors.uk %>%
+        select(ID, bg, A1, A2, B1, B2, DR1, DR2, age, DRI)} else {donors<-datasetDonors()}
+      
+      
+      validate(
+        need(candidates != "", "Please select a candidates data set!")
+      )
+      
+      validate(
+        need(abs.d != "", "Please select candidates' HLA antibodies data set!")
+      )
+      
+      validate(
+        need(donors != "", "Please select donors' data set!")
+      )
+      
+      # add a column to candidates' file to update respective donors
+      candidatesN<-candidates %>% mutate(donor = 0)
+      
+      # create a list with the same length of the number of donors
+      res <- vector("list", length = dim(donors)[1])
+      
+      # now the for loop
+      for (i in 1:dim(donors)[1]){
+        candid<-candidatesN %>% filter(donor == 0)
+        
+        res[[i]]<-uk_points(DRI = donors$DRI[i], # Donor RisK Index group
+                            dABO = donors$bg[i], # donor's blood group
+                            dA = c(donors$A1[i],donors$A2[i]), 
+                            dB = c(donors$B1[i],donors$B2[i]), 
+                            dDR = c(donors$DR1[i],donors$DR2[i]), # donor's HLA typing'
+                            dage = donors$age[i], # donor's age
+                            cdata = candid, # data file with candidates
+                            D1R1 = 1000,
+                            D1R2 = 700,
+                            D1R3 = 350,
+                            D1R4 = 0,
+                            D2R1 = 700,
+                            D2R2 = 1000,
+                            D2R3 = 500,
+                            D2R4 = 350,
+                            D3R1 = 350,
+                            D3R2 = 500, 
+                            D3R3 = 1000,
+                            D3R4 = 700,
+                            D4R1 = 0,
+                            D4R2 = 350,
+                            D4R3 = 700,
+                            D4R4 = 1000,
+                            ptsDial = input$tdUK,
+                            a1 = input$aa1UK, # value on HLA match and age combined formula
+                            a2 = input$aa2UK, # value on HLA match and age combined formula
+                            b1 = input$bb1UK, # value on HLA match and age combined formula
+                            b2 = input$bb2UK, # value on HLA match and age combined formula
+                            b3 = input$bb3UK, # value on HLA match and age combined formula
+                            m = input$mUK, # matchability formula
+                            nn = input$nUK, # matchability formula
+                            o = input$oUK, # matchability formula
+                            mm1 = as.numeric(input$mm1UK), # substrating points for 1 mm
+                            mm23 = as.numeric(input$mm23UK), # substrating points for 2-3 mm 
+                            mm46 = as.numeric(input$mm46UK), # substrating points for 4-6 mm
+                            pts = input$bloodUK, # substrating points for B blood group
+                            df.abs = abs.d, # data frame with candidates' HLA antibodies
+                            n = 2 # slice first n rows
+        ) %>% 
+          mutate(donor = donors$ID[i])
+        
+        candidatesN<-candidatesN %>%
+          mutate(donor = case_when(ID %in% res[[i]]$ID ~ donors$ID[i],
+                                   TRUE ~ donor))
+        
+      }
+      
+      ## bind the results in the list
+      compute_resmUK(do.call(rbind, res))
+    })
+  })
+  
+  output$resmUK <- renderDataTable({
+    compute_resmUK()
+  })
+  
+  # Downloadable csv of selected dataset ----
+  output$downloadDataIK <- downloadHandler(
+    filename = function() {
+      paste("UK_results", ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv2(compute_resmUK(), file, row.names = FALSE, fileEncoding="latin1")
+    }
+  )
+  
+  ## Resume dataset results from UK algorithm
+  output$resumeUK <-
+    render_gt({
+      
+      validate(
+        need(compute_resmUK() != "", "Results will be presented after the run!")
+      )
+      
+      tabsum<-compute_resmUK() %>% 
+        select(bg, age, dialysis, cPRA, Tier, mmHLA) %>% 
+        rename(`Blood group` = bg,
+               `receptores' age (years)` = age,
+               `time on dialysis (months)` = dialysis,
+               `Tier` = Tier,
+               `HLA miss matchs` = mmHLA)
+      
+      tbl_summary(tabsum) %>% as_gt()
+    })
   
 }
 

@@ -38,7 +38,8 @@ fluidPage(theme = shinytheme("spacelab"),
                                                list("Load example data"=1, 
                                                     "Upload your files"=2), selected=1),
                                   conditionalPanel(condition="input.dataInput=='2'",
-                                                   a("Your data files must be in the exact format as the provided example data"),
+                                                   h6("Your data files must be in the exact format as the provided in the example data, unless they are also for the UK algorithm. In this case, candidates' dataset must also have the columns 'Tier', 'MS' and 'RRI' while donors' dataset must have the column 'DRI'"),
+                                                   radioButtons("ukfiles", "Select 'UK' if the files are also for the UK algorithm", list("UK"=1, "others"=2),selected=2, inline = TRUE),
                                                    fileInput("file_cand", "upload candidates",
                                                              accept = c("text/csv",
                                                                         "text/comma-separated-values,text/plain",
@@ -401,9 +402,9 @@ fluidPage(theme = shinytheme("spacelab"),
                                               min = 0.1, max = 3,
                                               value = 1, step = 0.1, sep = ""),
                                   
-                                  sliderInput("multipleUK", "multiplyer for Donor-recipient risk matrix:",
-                                              min = 0.1, max = 2,
-                                              value = 1, step = 0.1, sep = ""),
+                                  # sliderInput("multipleUK", "multiplyer for Donor-recipient risk matrix:",
+                                  #             min = 0.1, max = 2,
+                                  #             value = 1, step = 0.1, sep = ""),
                                   DTOutput('tableDRriskUK'),
                                   h5("Donor-Recipient risk index combinations."),
                                   
@@ -548,15 +549,15 @@ fluidPage(theme = shinytheme("spacelab"),
                                   add_busy_spinner(spin = "fading-circle", position = "full-page"),
                                   actionButton("GoUK","Select your options and run it!!"),
                                   h6("(it can take several seconds, be patient!)"),
-                                  h4("Selected donor-recipient pairs for transplantation:")#,
-                                  # fluidRow(dataTableOutput(outputId = "resmUK"),
-                                  #          br(),
-                                  #          downloadButton("downloadDataUK", "Download")
-                                  # ),
-                                  # fluidRow(hr(),
-                                  #          h4("Resumed results from UK Transplant:"),
-                                  #          gt_output(outputId = "resumeUK") %>% withSpinner()
-                                  # )
+                                  h4("Selected donor-recipient pairs for transplantation:"),
+                                  fluidRow(dataTableOutput(outputId = "resmUK"),
+                                           br(),
+                                           downloadButton("downloadDataUK", "Download")
+                                  ),
+                                  fluidRow(hr(),
+                                           h4("Resumed results from UK Transplant:"),
+                                           gt_output(outputId = "resumeUK") %>% withSpinner()
+                                  )
                                 )
                               )
                      ),

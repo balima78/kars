@@ -207,13 +207,15 @@ uk_points<-function(DRI = 'D1', # Donor RisK Index group
              cdata = cdata)
   
   cdata<-cdata %>% rowwise() %>% 
-    mutate(compABO = compABO.uk(dABO = dABO, cABO = bg, tier = Tier), 
+    mutate(donor_age = dage,
+           compBlood = compABO.uk(dABO = dABO, cABO = bg, tier = Tier), 
            mmA = mmHLA(dA = dA, dB = dB, dDR = dDR,
                        cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmA"],
            mmB = mmHLA(dA = dA, dB = dB, dDR = dDR,
                        cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmB"],
            mmDR = mmHLA(dA = dA, dB = dB, dDR = dDR,
                         cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmDR"],
+           mmHLA = mmA + mmB + mmDR,
            level = case_when(mmA + mmB + mmDR == 0 ~ 1,
                              (mmDR == 0 & mmB <=1) | (mmDR == 1 & mmB == 0) ~ 2,
                              (mmDR == 0 & mmB == 2) |(mmDR == 1 & mmB == 1) ~ 3,
@@ -226,15 +228,30 @@ uk_points<-function(DRI = 'D1', # Donor RisK Index group
                                  mmA + mmB + mmDR == 1 ~ mm1,
                                  mmA + mmB + mmDR < 4 ~ mm23,
                                  TRUE ~ mm46),
-           matchability = m * (1+(MS/nn)^o),  # compute matchability points from Match Score
+           matchability = round(m * (1+(MS/nn)^o),1),  # compute matchability points from Match Score
            pts.age = age.diff(dage = dage, cage = age),
-           pts.abo = b.blood(dABO = dABO, cABO = bg, tier = Tier, pts = pts)
-    ) %>% ungroup()
+           pts.abo = b.blood(dABO = dABO, cABO = bg, tier = Tier, pts = pts),
+           pointsUK = round(ifelse(Tier == "A", 
+                             9999, 
+                             ric + pts.hla.age + matchability + pts.age + total.HLA + pts.abo),1)
+           ) %>% 
+    ungroup() %>% 
+    filter(compBlood == TRUE & (xm == FALSE | is.na(xm))) %>%
+    arrange(Tier, desc(pointsUK), desc(matchability), desc(dialysis)) %>%  
+    slice(1:n) %>% 
+    select(ID, bg, 
+           A1, A2, B1, B2, DR1, DR2, 
+           matchability, 
+           mmA, mmB, mmDR, mmHLA, 
+           age, donor_age, dialysis, cPRA, Tier,
+           pointsUK)
   
   cdata
   
 }
 
+
+uk_points()
 #exemplo<-uk_points()
 
 # matchability score:
