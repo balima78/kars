@@ -563,7 +563,14 @@ fluidPage(theme = shinytheme("spacelab"),
                      ),
                      
                      tabPanel("Material and Methods", icon = icon("cogs"),
-                              h5("Aqui ficarão descritos os algoritmos utilizados, bem como o tipo de dados")
+                              a(href="https://kars-manual.netlify.app", "KARS app's user manual is available from here"),
+                              br(),
+                              br(),
+                              h5("For each one of the models (Portugal, EuroTransplant, Lima et al, UK transplant), transplant candidates are excluded considering ABO compatibility and Virtual Crossmatch and the remaining are ordered for each donor according to the model’s rules."),
+                              h5("For the option ‘One donor’, top 10 candidates are displayed regarding the donor characteristics; for the option ‘Multiple donors’ each donor is attributed to de 2 best classified candidates and at the end we will have a dataset with the number of candidates equal to the double of the number of donors."),
+                              h5("A resume of the characteristics of the selected candidates is displayed allowing for the comparison between models."),
+                              br(),
+                              a(href="https://kars-manual.netlify.app", "KARS app's user manual is available from here")
                      )
           )
 )
