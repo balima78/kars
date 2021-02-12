@@ -430,8 +430,10 @@ function(input, output) {
       mm4 = as.numeric(input$mm4) # points for 4 HLA mm on ET points table
       mm5 = as.numeric(input$mm5) # points for 5 HLA mm on ET points table
       mm6 = as.numeric(input$mm6) # points for 6 HLA mm on ET points table
-      
+     
+      if (input$hlafreqs == 1) {ex.candidates<-ex.candidates.pt} else {ex.candidates<-ex.candidates.et}
       if (input$dataInput == 1) {candidates<-ex.candidates} else {candidates<-datasetCandsET()}
+      
       if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
       if (input$dataInput == 1) {donors<-ex.donors} else {donors<-datasetDonors()}
       
@@ -584,7 +586,7 @@ function(input, output) {
       
       iso = input$isoLIMA
       
-      if (input$dataInput == 1) {candidates<-ex.candidates %>% 
+      if (input$dataInput == 1) {candidates<-ex.candidates.pt %>% 
         select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)} else {candidates<-datasetCands() %>% 
           select(ID, bg,A1,A2,B1,B2,DR1,DR2,age,dialysis,cPRA)}
       if (input$dataInput == 1) {abs.d<-ex.abs} else {abs.d<-datasetAbs()}
@@ -895,7 +897,7 @@ function(input, output) {
   })
   
   # Downloadable csv of selected dataset ----
-  output$downloadDataIK <- downloadHandler(
+  output$downloadDataUK <- downloadHandler(
     filename = function() {
       paste("UK_results", ".csv", sep = "")
     },
