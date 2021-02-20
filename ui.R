@@ -10,7 +10,12 @@ fluidPage(theme = shinytheme("spacelab"),
           
           headerPanel(title ="", windowTitle = "KARS"),
           
-          titlePanel("HEADS | FMUP"),
+          #titlePanel("HEADS | FMUP"),
+
+          titlePanel(a(href="http://bioestatisticas.wixsite.com/bioestatisticas", target="_blank",
+                         img(src='ob.jpg', align = "right",height=60,width=150))),
+          a(href="http://bioestatisticas.wixsite.com/bioestatisticas/rat", target="_blank",
+            h1("Transplant Open Registry (TOR)")),
           
           navbarPage("KARS (version 0.0.1)",
                      tabPanel("Home", icon = icon("home"),
@@ -24,6 +29,8 @@ fluidPage(theme = shinytheme("spacelab"),
                                         h5("One way to evaluate the implementation of a new deceased donor kidneys’ allocation system (KAS) would be comparing two transplant candidates’ waiting lists. To one list, organs would be allocated by the rules in force, and on the other list, organs would be allocated, applying new rules in evaluation. However, this kind of study design is not feasible due to the deontological questions it raises. Alternatively, we can simulate different candidates waiting lists subjected to different organ’s allocation rules."),
                                         h5("Before implementing new rules, it is necessary to test them in order to dissipate, as much as possible, doubts questioning implementation’s success. The development of this application had as motivation being an aid to clarify the usefulness and efficiency of new set of rules for kidney allocation."),
                                         HTML('<p style="text-align:right">Bruno A Lima, Oficina de Bioestatística, 2020 <i class="fa fa-creative-commons"></i></p>'),
+                                        HTML('<a style="text-align:right" href="mailto:bioestatisticas@gmail.com">Just e-mail me!</a>'),
+                                        br(),
                                         br(),
                                         h4("Disclaimer: "),
                                         h5("This application is intended for research purposes only, not for clinical or commercial use. It is a non-profit service to the scientific community, provided on an 'AS-IS' basis without any warranty, expressed or implied. The authors can not be held liable in any way for the service provided here.")
@@ -566,9 +573,38 @@ fluidPage(theme = shinytheme("spacelab"),
                               a(href="https://kars-manual.netlify.app", "KARS app's user manual is available from here"),
                               br(),
                               br(),
-                              h5("For each one of the models (Portugal, EuroTransplant, Lima et al, UK transplant), transplant candidates are excluded considering ABO compatibility and Virtual Crossmatch and the remaining are ordered for each donor according to the model’s rules."),
-                              h5("For the option ‘One donor’, top 10 candidates are displayed regarding the donor characteristics; for the option ‘Multiple donors’ each donor is attributed to de 2 best classified candidates and at the end we will have a dataset with the number of candidates equal to the double of the number of donors."),
+                              h5("When possible, kidney transplantation is the preferred treatment for end stage renal disease patients. 
+                                 The number of patients waiting for a kidney transplant is much higher than 
+                                 the number of available organs, so it is imperative to define organ allocation systems 
+                                 that guarantee an equitable distribution of this scarce resource."),
+                              h5("The ability to predict kidney transplant success at time of organ allocation is an essential leverage 
+                                 if we want to minimize the number of patients who return to an already overcrowded waiting list for transplantation."),
+                              h5("Since evidence-based medicine is increasingly used as the standard to define good practices in healthcare, 
+                                 there is a need to develop prognostic tools that can be used in decision making. 
+                                 Therefore, the definition of deceased donors’ kidneys allocation rules on transplantation must be supported 
+                                 by simulation exercises that allows foreseeing, as much as possible, the consequences of these rules."), 
+                              h5("Kidney Allocation Rules Simulator (KARS) application allows testing different kidney transplant allocation systems 
+                                 with different donors and transplant candidates’ datasets."),
+                              h5("In this application it is possible to simulate allocation rules implemented in Portugal, 
+                                 in countries within Eurtotransplant, in the United Kingdom,  
+                                 and a system previously suggested by Lima et al. 
+                                 Also, KARS application allows changing the original punctuation used by the mentioned allocation systems, 
+                                 in order to simulate how these changes are translated in the type of candidates selected for transplantation."), 
+                              h5("As inputs, this application has three data files: a file with transplant candidates’ information, a file with candidates’ anti-HLA antibodies, and a file with donors’ characteristics. 
+                                 As output it is returned a file with donor-recipient pairs selected according to the kidney allocation system simulated."),
+                              h5("For each one of the models (Portugal, EuroTransplant, Lima et al, UK transplant), 
+                                 transplant candidates are excluded considering ABO compatibility and Virtual Crossmatch and 
+                                 the remaining are ordered for each donor according to the model’s rules."),
+                              h5("For the option ‘One donor’, top 10 candidates are displayed regarding the donor characteristics; 
+                                 for the option ‘Multiple donors’ each donor is attributed to de 2 best classified candidates and 
+                                 at the end we will have a dataset with the number of candidates equal to the double of the number of donors."),
                               h5("A resume of the characteristics of the selected candidates is displayed allowing for the comparison between models."),
+                              h5("With the same candidates and donors’ files we will have different outputs for each simulation we run, 
+                                 and for each output we will have a resume of the selected donor-recipients pairs as: 
+                                 recipients’ blood groups frequencies mean age, mean time on dialyses, cPRA frequencies, HLA mismatches, and mean transplant score as a measure of good transplant outcome."),
+                              h5("When seeking for waste reduction while ensuring a fair distribution of organs from deceased donors, 
+                                 the definition of rules for the selection of donor-recipient pairs in renal transplantation must be based on evidences supported by data.  
+                                 With this purpose, we also need to be able to predict transplant outcomes to define the best allocation rules."),
                               br(),
                               a(href="https://kars-manual.netlify.app", "KARS app's user manual is available from here")
                      )
