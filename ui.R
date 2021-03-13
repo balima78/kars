@@ -14,7 +14,8 @@ fluidPage(theme = shinytheme("spacelab"),
 
           titlePanel(a(href="http://bioestatisticas.wixsite.com/bioestatisticas", target="_blank",
                          img(src='ob.jpg', align = "right",height=60,width=150))),
-          a(href="http://bioestatisticas.wixsite.com/bioestatisticas/tor", target="_blank",
+          
+          a(href="https://transplants-open.netlify.app/index.html", target="_blank",
             h1("Transplants Open Registry (TOR)")),
           
           navbarPage("KARS (version 0.0.1)",
@@ -570,7 +571,7 @@ fluidPage(theme = shinytheme("spacelab"),
                      ),
                      
                      tabPanel("Material and Methods", icon = icon("cogs"),
-                              a(href="https://kars-manual.netlify.app", "KARS app's user manual is available from here"),
+                              a(href="https://kars-manual.netlify.app", "KARS app's users' manual is available from here"),
                               br(),
                               br(),
                               h5("When possible, kidney transplantation is the preferred treatment for end stage renal disease patients. 
@@ -606,7 +607,7 @@ fluidPage(theme = shinytheme("spacelab"),
                                  the definition of rules for the selection of donor-recipient pairs in renal transplantation must be based on evidences supported by data.  
                                  With this purpose, we also need to be able to predict transplant outcomes to define the best allocation rules."),
                               br(),
-                              a(href="https://kars-manual.netlify.app", "KARS app's user manual is available from here")
+                              a(href="https://kars-manual.netlify.app", "KARS app's users' manual is available from here")
                      )
           )
 )
