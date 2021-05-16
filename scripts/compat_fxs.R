@@ -137,5 +137,66 @@ hi<-function(cPRA = cPRA, cutoff = 85){
   res<-if_else(cPRA > cutoff, TRUE, FALSE)
 }
 
-
+## 
+# function txscore(ageR = , race = , insurance= , causeESRD = 1, timeD = 1, diabetesR = F, coronary = F, albumin = , hemoglobin =, ageD = , diabetesD= F, ECD = F, mmHLA = )
+txscore <- function(ageR = 20
+                    , race = "White"
+                    #, insurance = 0
+                    , causeESRD = "Other"
+                    , timeD = 12 #
+                    , diabetesR = F
+                    , coronary = F
+                    , albumin = 1.5
+                    , hemoglobin = 10
+                    , ageD = 30
+                    , diabetesD= "Absence"
+                    , ECD = F
+                    #, mmHLA = "0"
+                    , mmHLA_A = 0
+                    , mmHLA_B = 0
+                    , mmHLA_DR = 0
+){
+  
+  mmHLA_ <- as.numeric(mmHLA_A) + as.numeric(mmHLA_B) + as.numeric(mmHLA_DR)
+  mmHLA <- ifelse(mmHLA_ == 0 , '0',
+                  ifelse(mmHLA_ < 4, '1-3', '4-6'))
+  
+  ageR <- ifelse(ageR < 35 , 0.0993, 
+                 ifelse(ageR <50 , -0.0784,
+                        ifelse(ageR < 65, 0, 0.1881)))
+  race <- ifelse(race == "White", 0, 
+                 ifelse(race == "Black", 0.1609,
+                        ifelse(race == "Hispanic", -0.2554, -0.4475)))
+  causeESRD <- ifelse(causeESRD == "Diabetes", 0, 
+                      ifelse(causeESRD == "Hypertension", 0.1541,
+                             ifelse(causeESRD == "Glomerulonephritis", 0.1447,
+                                    ifelse(causeESRD == "Cystic Disease", -0.1870, 0.3209))))
+  timeD <- ifelse(timeD < 12, 0, 
+                  ifelse(timeD < 36, -0.2618,
+                         ifelse(timeD < 61, -0.3747, -0.1432)))
+  diabetesR <- ifelse(diabetesR == T, 0.3021, 0)
+  coronary <- ifelse(coronary == T, 0.2617, 0)
+  albumin <- (albumin - 4)*(-0.2644)
+  hemoglobin <- (hemoglobin - 12.3)*(-0.0451)
+  ageD <- (ageD - 39)*0.0059
+  diabetesD <- ifelse(diabetesD == "Absence", 0,  
+                      ifelse(diabetesD == "Presence", 0.4596, -0.3308))
+  ECD <- ifelse(ECD == T, 0.2082, 0)
+  mmHLA <- ifelse(mmHLA == "0" , 0,
+                  ifelse(mmHLA == "1-3", 0.3241, 0.3115))
+  
+  LP <- ageR + race + causeESRD + timeD + diabetesR + coronary + albumin + hemoglobin + ageD + diabetesD + ECD + mmHLA
+  
+  gamma <- 0.916
+  
+  PS = gamma * LP
+  
+  prob5y <- round((1-0.752292^exp(PS))*100,2)
+  
+  list(LP = LP
+       , gamma = gamma
+       , PS = PS
+       , prob5y = prob5y)
+  
+}
 

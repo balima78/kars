@@ -173,6 +173,16 @@ function(input, output, session) {
                   itemE = as.numeric(input$e), # points for E) on PT points table
                   df.abs = abs.d, # candidates' HLA antibodies
                   n = 10)
+      
+      dt <- dt %>%
+        #rowwise() %>% 
+        mutate(txScore = txscore(ageR = age
+                                 , timeD = dialysis
+                                 , ageD = donor_age
+                                 , mmHLA_A = mmA
+                                 , mmHLA_B = mmB
+                                 , mmHLA_DR = mmDR)$prob5y
+               ) #%>% ungroup()
 
     datatable(dt, options = list(pageLength = 5, dom = 'tip'))
   })
@@ -262,8 +272,17 @@ function(input, output, session) {
       
     }
     
-    ## bind the results in the list
-    compute_resm(do.call(rbind, res))
+    ## bind the results in the list and compute txScore
+    dt <- do.call(rbind, res) %>% 
+      mutate(txScore = txscore(ageR = age
+                               , timeD = dialysis
+                               , ageD = donor_age
+                               , mmHLA_A = mmA
+                               , mmHLA_B = mmB
+                               , mmHLA_DR = mmDR)$prob5y
+      )
+    # add to reactiveval
+    compute_resm(dt)
     })
     
     
@@ -292,12 +311,13 @@ function(input, output, session) {
       )
       
       tabsum<-compute_resm() %>% 
-        select(bg, age, dialysis, cPRA, HI, mmHLA) %>% 
+        select(bg, age, dialysis, cPRA, HI, mmHLA, txScore) %>% 
         rename(`Blood group` = bg,
                `receptores' age (years)` = age,
                `time on dialysis (months)` = dialysis,
                `Hiper Immunized` = HI,
-               `HLA miss matchs` = mmHLA)
+               `HLA miss matchs` = mmHLA,
+               TxScore = txScore)
       
       tbl_summary(tabsum) %>% as_gt()
     })
@@ -399,6 +419,15 @@ function(input, output, session) {
                   df.abs = abs.d, # candidates' HLA antibodies
                   n = 10)
 
+    dt <- dt %>%
+      mutate(txScore = txscore(ageR = age
+                               , timeD = dialysis
+                               , ageD = donor_age
+                               , mmHLA_A = mmA
+                               , mmHLA_B = mmB
+                               , mmHLA_DR = mmDR)$prob5y
+      )
+    
     datatable(dt, options = list(pageLength = 5, dom = 'tip'))
   }) 
   
@@ -483,8 +512,18 @@ function(input, output, session) {
         
       }
       
-      ## bind the results in the list
-      compute_resmET(do.call(rbind, res))
+      ## bind the results in the list and compute txScore
+      dt <- do.call(rbind, res) %>% 
+        mutate(txScore = txscore(ageR = age
+                                 , timeD = dialysis
+                                 , ageD = donor_age
+                                 , mmHLA_A = mmA
+                                 , mmHLA_B = mmB
+                                 , mmHLA_DR = mmDR)$prob5y
+        )
+      # add to reactiveval
+      compute_resmET(dt)
+      
       })
     
   })
@@ -513,12 +552,13 @@ function(input, output, session) {
       )
       
       tabsum<-compute_resmET() %>% 
-        select(bg, age, dialysis, cPRA, HI, mmHLA) %>% 
+        select(bg, age, dialysis, cPRA, HI, mmHLA, txScore) %>% 
         rename(`Blood group` = bg,
                `receptores' age (years)` = age,
                `time on dialysis (months)` = dialysis,
                `Hiper Immunized` = HI,
-               `HLA miss matchs` = mmHLA)
+               `HLA miss matchs` = mmHLA,
+               TxScore = txScore)
       
       tbl_summary(tabsum) %>% as_gt()
     })
@@ -564,6 +604,15 @@ function(input, output, session) {
                    cdata = candidates, # data file with candidates
                    df.abs = abs.d, # candidates' HLA antibodies
                    n = 10)
+    
+    dt <- dt %>%
+      mutate(txScore = txscore(ageR = age
+                               , timeD = dialysis
+                               , ageD = donor_age
+                               , mmHLA_A = mmA
+                               , mmHLA_B = mmB
+                               , mmHLA_DR = mmDR)$prob5y
+      )
     
     datatable(dt, options = list(pageLength = 5, dom = 'tip'))
     
@@ -638,8 +687,18 @@ function(input, output, session) {
         
       }
       
-      ## bind the results in the list
-      compute_resmLIMA(do.call(rbind, res))
+      ## bind the results in the list and compute txScore
+      dt <- do.call(rbind, res) %>% 
+        mutate(txScore = txscore(ageR = age
+                                 , timeD = dialysis
+                                 , ageD = donor_age
+                                 , mmHLA_A = mmA
+                                 , mmHLA_B = mmB
+                                 , mmHLA_DR = mmDR)$prob5y
+        )
+      # add to reactiveval
+      compute_resmLIMA(dt)
+
     })
     })
   
@@ -666,12 +725,13 @@ function(input, output, session) {
       )
       
       tabsum<-compute_resmLIMA() %>% 
-        select(bg, age, dialysis, cPRA, HI, mmHLA) %>% 
+        select(bg, age, dialysis, cPRA, HI, mmHLA, txScore) %>% 
         rename(`Blood group` = bg,
                `receptores' age (years)` = age,
                `time on dialysis (months)` = dialysis,
                `Hiper Immunized` = HI,
-               `HLA miss matchs` = mmHLA)
+               `HLA miss matchs` = mmHLA,
+               TxScore = txScore)
       
       tbl_summary(tabsum) %>% as_gt()
     })
@@ -790,6 +850,15 @@ function(input, output, session) {
                   n = 10 # slice first n rows
     )
 
+    dt <- dt %>%
+      mutate(txScore = txscore(ageR = age
+                               , timeD = dialysis
+                               , ageD = donor_age
+                               , mmHLA_A = mmA
+                               , mmHLA_B = mmB
+                               , mmHLA_DR = mmDR)$prob5y
+      )
+    
     datatable(dt, options = list(pageLength = 5, dom = 'tip'))
     
   })
@@ -887,8 +956,18 @@ function(input, output, session) {
         
       }
       
-      ## bind the results in the list
-      compute_resmUK(do.call(rbind, res))
+      ## bind the results in the list and compute txScore
+      dt <- do.call(rbind, res) %>% 
+        mutate(txScore = txscore(ageR = age
+                                 , timeD = dialysis
+                                 , ageD = donor_age
+                                 , mmHLA_A = mmA
+                                 , mmHLA_B = mmB
+                                 , mmHLA_DR = mmDR)$prob5y
+        )
+      # add to reactiveval
+      compute_resmUK(dt)
+     
     })
   })
   
@@ -915,12 +994,13 @@ function(input, output, session) {
       )
       
       tabsum<-compute_resmUK() %>% 
-        select(bg, age, dialysis, cPRA, Tier, mmHLA) %>% 
+        select(bg, age, dialysis, cPRA, Tier, mmHLA, txScore) %>% 
         rename(`Blood group` = bg,
                `receptores' age (years)` = age,
                `time on dialysis (months)` = dialysis,
                `Tier` = Tier,
-               `HLA miss matchs` = mmHLA)
+               `HLA miss matchs` = mmHLA,
+               TxScore = txScore)
       
       tbl_summary(tabsum) %>% as_gt()
     })
