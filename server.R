@@ -1005,256 +1005,256 @@ function(input, output, session) {
       tbl_summary(tabsum) %>% as_gt()
     })
   
-  ############
-  ############ ligação entre inputs
-  ############   
-  ############ donor's age
-  observeEvent(input$dage,{
-    new <- input$dage
-    updateSliderInput(session, "dageET", value = new) 
-  })
-  
-  observeEvent(input$dageET,{ 
-    new <- input$dageET
-    updateSliderInput(session, "dage", value = new) 
-  })
-  
-  observeEvent(input$dage,{
-    new <- input$dage
-    updateSliderInput(session, "dageLIMA", value = new) 
-  })
-  
-  observeEvent(input$dageLIMA,{ 
-    new <- input$dageLIMA
-    updateSliderInput(session, "dage", value = new) 
-  })
-  
-  observeEvent(input$dage,{
-    new <- input$dage
-    updateSliderInput(session, "dageUK", value = new) 
-  })
-  
-  observeEvent(input$dageUK,{ 
-    new <- input$dageUK
-    updateSliderInput(session, "dage", value = new) 
-  })
-  
-  ############ donor's ABO
-  observeEvent(input$dabo,{
-    new <- input$dabo
-    updateRadioButtons(session, "daboET", selected = new)
-  })
-  
-  observeEvent(input$daboET,{
-    new <- input$daboET
-    updateRadioButtons(session, "dabo", selected = new)
-  })
-  
-  observeEvent(input$dabo,{
-    new <- input$dabo
-    updateRadioButtons(session, "daboLIMA", selected = new)
-  })
-  
-  observeEvent(input$daboLIMA,{
-    new <- input$daboLIMA
-    updateRadioButtons(session, "dabo", selected = new)
-  })
-  
-  observeEvent(input$dabo,{
-    new <- input$dabo
-    updateRadioButtons(session, "daboUK", selected = new)
-  })
-  
-  observeEvent(input$daboUK,{
-    new <- input$daboUK
-    updateRadioButtons(session, "dabo", selected = new)
-  })
-  
-############ donor's typing HLA-A a1
-observeEvent(input$a1,{
-  new <- input$a1
-  updateTextAreaInput(session, "a1ET", value  = new)
-})
-
-observeEvent(input$a1ET,{
-  new <- input$a1ET
-  updateTextAreaInput(session, "a1", value  = new)
-})
-
-observeEvent(input$a1,{
-  new <- input$a1
-  updateTextAreaInput(session, "a1LIMA", value  = new)
-})
-
-observeEvent(input$a1LIMA,{
-  new <- input$a1LIMA
-  updateTextAreaInput(session, "a1", value  = new)
-})
-
-observeEvent(input$a1,{
-  new <- input$a1
-  updateTextAreaInput(session, "a1UK", value  = new)
-})
-
-observeEvent(input$a1UK,{
-  new <- input$a1UK
-  updateTextAreaInput(session, "a1", value  = new)
-})
-
-############ donor's typing HLA-A a2
-observeEvent(input$a2,{
-  new <- input$a2
-  updateTextAreaInput(session, "a2ET", value  = new)
-})
-
-observeEvent(input$a2ET,{
-  new <- input$a2ET
-  updateTextAreaInput(session, "a2", value  = new)
-})
-
-observeEvent(input$a2,{
-  new <- input$a2
-  updateTextAreaInput(session, "a2LIMA", value  = new)
-})
-
-observeEvent(input$a2LIMA,{
-  new <- input$a2LIMA
-  updateTextAreaInput(session, "a2", value  = new)
-})
-
-observeEvent(input$a2,{
-  new <- input$a2
-  updateTextAreaInput(session, "a2UK", value  = new)
-})
-
-observeEvent(input$a2UK,{
-  new <- input$a2UK
-  updateTextAreaInput(session, "a2", value  = new)
-})
-
-############ donor's typing HLA-B b1
-observeEvent(input$b1,{
-  new <- input$b1
-  updateTextAreaInput(session, "b1ET", value  = new)
-})
-
-observeEvent(input$b1ET,{
-  new <- input$b1ET
-  updateTextAreaInput(session, "b1", value  = new)
-})
-
-observeEvent(input$b1,{
-  new <- input$b1
-  updateTextAreaInput(session, "b1LIMA", value  = new)
-})
-
-observeEvent(input$b1LIMA,{
-  new <- input$b1LIMA
-  updateTextAreaInput(session, "b1", value  = new)
-})
-
-observeEvent(input$b1,{
-  new <- input$b1
-  updateTextAreaInput(session, "b1UK", value  = new)
-})
-
-observeEvent(input$b1UK,{
-  new <- input$b1UK
-  updateTextAreaInput(session, "b1", value  = new)
-})
-
-############ donor's typing HLA-B b2
-observeEvent(input$b2,{
-  new <- input$b2
-  updateTextAreaInput(session, "b2ET", value  = new)
-})
-
-observeEvent(input$b2ET,{
-  new <- input$b2ET
-  updateTextAreaInput(session, "b2", value  = new)
-})
-
-observeEvent(input$b2,{
-  new <- input$b2
-  updateTextAreaInput(session, "b2LIMA", value  = new)
-})
-
-observeEvent(input$b2LIMA,{
-  new <- input$b2LIMA
-  updateTextAreaInput(session, "b2", value  = new)
-})
-
-observeEvent(input$b2,{
-  new <- input$b2
-  updateTextAreaInput(session, "b2UK", value  = new)
-})
-
-observeEvent(input$b2UK,{
-  new <- input$b2UK
-  updateTextAreaInput(session, "b2", value  = new)
-})
-
-############ donor's typing HLA-DR dr1
-observeEvent(input$dr1,{
-  new <- input$dr1
-  updateTextAreaInput(session, "dr1ET", value  = new)
-})
-
-observeEvent(input$dr1ET,{
-  new <- input$dr1ET
-  updateTextAreaInput(session, "dr1", value  = new)
-})
-
-observeEvent(input$dr1,{
-  new <- input$dr1
-  updateTextAreaInput(session, "dr1LIMA", value  = new)
-})
-
-observeEvent(input$dr1LIMA,{
-  new <- input$dr1LIMA
-  updateTextAreaInput(session, "dr1", value  = new)
-})
-
-observeEvent(input$dr1,{
-  new <- input$dr1
-  updateTextAreaInput(session, "dr1UK", value  = new)
-})
-
-observeEvent(input$dr1UK,{
-  new <- input$dr1UK
-  updateTextAreaInput(session, "dr1", value  = new)
-})
-
-############ donor's typing HLA-DR dr2
-observeEvent(input$dr2,{
-  new <- input$dr2
-  updateTextAreaInput(session, "dr2ET", value  = new)
-})
-
-observeEvent(input$dr2ET,{
-  new <- input$dr2ET
-  updateTextAreaInput(session, "dr2", value  = new)
-})
-
-observeEvent(input$dr2,{
-  new <- input$dr2
-  updateTextAreaInput(session, "dr2LIMA", value  = new)
-})
-
-observeEvent(input$dr2LIMA,{
-  new <- input$dr2LIMA
-  updateTextAreaInput(session, "dr2", value  = new)
-})
-
-observeEvent(input$dr2,{
-  new <- input$dr2
-  updateTextAreaInput(session, "dr2UK", value  = new)
-})
-
-observeEvent(input$dr2UK,{
-  new <- input$dr2UK
-  updateTextAreaInput(session, "dr2", value  = new)
-})
+#   ######################################################################################
+#   ############ ligação entre inputs ############
+#   ############   
+#   ############ donor's age
+#   observeEvent(input$dage,{
+#     new <- input$dage
+#     updateSliderInput(session, "dageET", value = new) 
+#   })
+#   
+#   observeEvent(input$dageET,{ 
+#     new <- input$dageET
+#     updateSliderInput(session, "dage", value = new) 
+#   })
+#   
+#   observeEvent(input$dage,{
+#     new <- input$dage
+#     updateSliderInput(session, "dageLIMA", value = new) 
+#   })
+#   
+#   observeEvent(input$dageLIMA,{ 
+#     new <- input$dageLIMA
+#     updateSliderInput(session, "dage", value = new) 
+#   })
+#   
+#   observeEvent(input$dage,{
+#     new <- input$dage
+#     updateSliderInput(session, "dageUK", value = new) 
+#   })
+#   
+#   observeEvent(input$dageUK,{ 
+#     new <- input$dageUK
+#     updateSliderInput(session, "dage", value = new) 
+#   })
+#   
+#   ############ donor's ABO
+#   observeEvent(input$dabo,{
+#     new <- input$dabo
+#     updateRadioButtons(session, "daboET", selected = new)
+#   })
+#   
+#   observeEvent(input$daboET,{
+#     new <- input$daboET
+#     updateRadioButtons(session, "dabo", selected = new)
+#   })
+#   
+#   observeEvent(input$dabo,{
+#     new <- input$dabo
+#     updateRadioButtons(session, "daboLIMA", selected = new)
+#   })
+#   
+#   observeEvent(input$daboLIMA,{
+#     new <- input$daboLIMA
+#     updateRadioButtons(session, "dabo", selected = new)
+#   })
+#   
+#   observeEvent(input$dabo,{
+#     new <- input$dabo
+#     updateRadioButtons(session, "daboUK", selected = new)
+#   })
+#   
+#   observeEvent(input$daboUK,{
+#     new <- input$daboUK
+#     updateRadioButtons(session, "dabo", selected = new)
+#   })
+#   
+# ############ donor's typing HLA-A a1
+# observeEvent(input$a1,{
+#   new <- input$a1
+#   updateTextAreaInput(session, "a1ET", value  = new)
+# })
+# 
+# observeEvent(input$a1ET,{
+#   new <- input$a1ET
+#   updateTextAreaInput(session, "a1", value  = new)
+# })
+# 
+# observeEvent(input$a1,{
+#   new <- input$a1
+#   updateTextAreaInput(session, "a1LIMA", value  = new)
+# })
+# 
+# observeEvent(input$a1LIMA,{
+#   new <- input$a1LIMA
+#   updateTextAreaInput(session, "a1", value  = new)
+# })
+# 
+# observeEvent(input$a1,{
+#   new <- input$a1
+#   updateTextAreaInput(session, "a1UK", value  = new)
+# })
+# 
+# observeEvent(input$a1UK,{
+#   new <- input$a1UK
+#   updateTextAreaInput(session, "a1", value  = new)
+# })
+# 
+# ############ donor's typing HLA-A a2
+# observeEvent(input$a2,{
+#   new <- input$a2
+#   updateTextAreaInput(session, "a2ET", value  = new)
+# })
+# 
+# observeEvent(input$a2ET,{
+#   new <- input$a2ET
+#   updateTextAreaInput(session, "a2", value  = new)
+# })
+# 
+# observeEvent(input$a2,{
+#   new <- input$a2
+#   updateTextAreaInput(session, "a2LIMA", value  = new)
+# })
+# 
+# observeEvent(input$a2LIMA,{
+#   new <- input$a2LIMA
+#   updateTextAreaInput(session, "a2", value  = new)
+# })
+# 
+# observeEvent(input$a2,{
+#   new <- input$a2
+#   updateTextAreaInput(session, "a2UK", value  = new)
+# })
+# 
+# observeEvent(input$a2UK,{
+#   new <- input$a2UK
+#   updateTextAreaInput(session, "a2", value  = new)
+# })
+# 
+# ############ donor's typing HLA-B b1
+# observeEvent(input$b1,{
+#   new <- input$b1
+#   updateTextAreaInput(session, "b1ET", value  = new)
+# })
+# 
+# observeEvent(input$b1ET,{
+#   new <- input$b1ET
+#   updateTextAreaInput(session, "b1", value  = new)
+# })
+# 
+# observeEvent(input$b1,{
+#   new <- input$b1
+#   updateTextAreaInput(session, "b1LIMA", value  = new)
+# })
+# 
+# observeEvent(input$b1LIMA,{
+#   new <- input$b1LIMA
+#   updateTextAreaInput(session, "b1", value  = new)
+# })
+# 
+# observeEvent(input$b1,{
+#   new <- input$b1
+#   updateTextAreaInput(session, "b1UK", value  = new)
+# })
+# 
+# observeEvent(input$b1UK,{
+#   new <- input$b1UK
+#   updateTextAreaInput(session, "b1", value  = new)
+# })
+# 
+# ############ donor's typing HLA-B b2
+# observeEvent(input$b2,{
+#   new <- input$b2
+#   updateTextAreaInput(session, "b2ET", value  = new)
+# })
+# 
+# observeEvent(input$b2ET,{
+#   new <- input$b2ET
+#   updateTextAreaInput(session, "b2", value  = new)
+# })
+# 
+# observeEvent(input$b2,{
+#   new <- input$b2
+#   updateTextAreaInput(session, "b2LIMA", value  = new)
+# })
+# 
+# observeEvent(input$b2LIMA,{
+#   new <- input$b2LIMA
+#   updateTextAreaInput(session, "b2", value  = new)
+# })
+# 
+# observeEvent(input$b2,{
+#   new <- input$b2
+#   updateTextAreaInput(session, "b2UK", value  = new)
+# })
+# 
+# observeEvent(input$b2UK,{
+#   new <- input$b2UK
+#   updateTextAreaInput(session, "b2", value  = new)
+# })
+# 
+# ############ donor's typing HLA-DR dr1
+# observeEvent(input$dr1,{
+#   new <- input$dr1
+#   updateTextAreaInput(session, "dr1ET", value  = new)
+# })
+# 
+# observeEvent(input$dr1ET,{
+#   new <- input$dr1ET
+#   updateTextAreaInput(session, "dr1", value  = new)
+# })
+# 
+# observeEvent(input$dr1,{
+#   new <- input$dr1
+#   updateTextAreaInput(session, "dr1LIMA", value  = new)
+# })
+# 
+# observeEvent(input$dr1LIMA,{
+#   new <- input$dr1LIMA
+#   updateTextAreaInput(session, "dr1", value  = new)
+# })
+# 
+# observeEvent(input$dr1,{
+#   new <- input$dr1
+#   updateTextAreaInput(session, "dr1UK", value  = new)
+# })
+# 
+# observeEvent(input$dr1UK,{
+#   new <- input$dr1UK
+#   updateTextAreaInput(session, "dr1", value  = new)
+# })
+# 
+# ############ donor's typing HLA-DR dr2
+# observeEvent(input$dr2,{
+#   new <- input$dr2
+#   updateTextAreaInput(session, "dr2ET", value  = new)
+# })
+# 
+# observeEvent(input$dr2ET,{
+#   new <- input$dr2ET
+#   updateTextAreaInput(session, "dr2", value  = new)
+# })
+# 
+# observeEvent(input$dr2,{
+#   new <- input$dr2
+#   updateTextAreaInput(session, "dr2LIMA", value  = new)
+# })
+# 
+# observeEvent(input$dr2LIMA,{
+#   new <- input$dr2LIMA
+#   updateTextAreaInput(session, "dr2", value  = new)
+# })
+# 
+# observeEvent(input$dr2,{
+#   new <- input$dr2
+#   updateTextAreaInput(session, "dr2UK", value  = new)
+# })
+# 
+# observeEvent(input$dr2UK,{
+#   new <- input$dr2UK
+#   updateTextAreaInput(session, "dr2", value  = new)
+# })
   
 }
 

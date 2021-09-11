@@ -600,9 +600,13 @@ fluidPage(theme = shinytheme("spacelab"),
                                  for the option ‘Multiple donors’ each donor is attributed to de 2 best classified candidates and 
                                  at the end we will have a dataset with the number of candidates equal to the double of the number of donors."),
                               h5("A resume of the characteristics of the selected candidates is displayed allowing for the comparison between models."),
-                              h5("With the same candidates and donors’ files we will have different outputs for each simulation we run, 
+                              HTML("<h5>With the same candidates and donors’ files we will have different outputs for each simulation we run, 
                                  and for each output we will have a resume of the selected donor-recipients pairs as: 
-                                 recipients’ blood groups frequencies mean age, mean time on dialyses, cPRA frequencies, HLA mismatches, and mean transplant score as a measure of good transplant outcome."),
+                                 recipients’ blood groups, frequencies median ages, median time on dialyses, cPRA frequencies, HLA mismatches, and median transplant score (TxScore) as a measure of good transplant outcome. 
+                                 The TxScore is compute as described by <a href='https://pubmed.ncbi.nlm.nih.gov/27391198/'>Molnar, et al</a> as the estimated 5 year probability to mortality or graft failure. 
+                                 For this score it is assumed that all donors have no diabetes and are not extended criteria donors.
+                                 Also, as default, it is assumed that all recepients are white, have no coronary artery disease, have no diabetes and their end stage renal disease is unknown. 
+                                 Likewise, we can compare TxScores based on donors' and recipients' ages, recipients time on dialysis and HLA mismacths between donor and recipient.</h5>"),
                               h5("When seeking for waste reduction while ensuring a fair distribution of organs from deceased donors, 
                                  the definition of rules for the selection of donor-recipient pairs in renal transplantation must be based on evidences supported by data.  
                                  With this purpose, we also need to be able to predict transplant outcomes to define the best allocation rules."),

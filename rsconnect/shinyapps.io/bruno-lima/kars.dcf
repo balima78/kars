@@ -1,0 +1,10 @@
+name: kars
+title:
+username:
+account: bruno-lima
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4139768
+bundleId: 4604449
+url: https://bruno-lima.shinyapps.io/kars/
+when: 1621190225.10484
