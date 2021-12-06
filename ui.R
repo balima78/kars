@@ -16,7 +16,7 @@ fluidPage(theme = shinytheme("spacelab"),
                          img(src='ob.jpg', align = "right",height=60,width=150))),
           
           a(href="https://transplants-open.netlify.app/index.html", target="_blank",
-            h1("Transplants Open Registry (TOR)")),
+            h1("Transplants Open Registry (TxOR)")),
           
           navbarPage("KARS (version 0.0.1)",
                      tabPanel("Home", icon = icon("home"),

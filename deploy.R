@@ -8,7 +8,7 @@ rsconnect::setAccountInfo(name='balima',
                           secret='uUpBl8mr3Dd83+wHNxcqCLK3It0+pFQkWkfabn4d')
 
 
-rsconnect::deployApp("D:/2.PhD/HEADS/kars")
+rsconnect::deployApp("C:/Users/balim/Documents/2.PhD/HEADS/kars")
 
 
 getwd()
