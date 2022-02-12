@@ -293,45 +293,45 @@ donormatch<-function(data = ex.donors,
 }
 
 ################ para apagar ###################
-donormatch()
-
-# teste para um candidato
-res<-NULL
-
-dados<-as.data.frame(ex.candidates.pt)
-
-for (i in 1:20){
-  res[i]<-donormatch(data = ex.donors,
-                     cA = c(dados[i,"A1"],dados[i,"A2"]),
-                     cB = c(dados[i,"B1"],dados[i,"B2"]),
-                     cDR = c(dados[i,"DR1"],dados[i,"DR2"]),
-                     cABO = dados[i,"bg"],
-                     abs = NULL)
-  res
-}
-
-res
-
-
-# criar tabela abs com um candidato por linha
-tab.abs<-ex.abs %>% group_by(ID) %>% nest() %>% ungroup()
-# juntar abs à tabela de candidatos
-ex.candidates.pt<-ex.candidates.pt %>% left_join(tab.abs)
-
-# testar num loop depois de juntar os abs
-res<-NULL
-
-dados<-as.data.frame(ex.candidates.pt)
-
-for (i in 1:dim(ex.candidates.pt)[1]){
-  res[i]<-donormatch(data = ex.donors,
-                     cA = c(dados[i,"A1"],dados[i,"A2"]),
-                     cB = c(dados[i,"B1"],dados[i,"B2"]),
-                     cDR = c(dados[i,"DR1"],dados[i,"DR2"]),
-                     cABO = dados[i,"bg"],
-                     abs = as.data.frame(dados[i,"data"][[1]]) %>% .$abs)
-  res
-}
+# donormatch()
+# 
+# # teste para um candidato
+# res<-NULL
+# 
+# dados<-as.data.frame(ex.candidates.pt)
+# 
+# for (i in 1:20){
+#   res[i]<-donormatch(data = ex.donors,
+#                      cA = c(dados[i,"A1"],dados[i,"A2"]),
+#                      cB = c(dados[i,"B1"],dados[i,"B2"]),
+#                      cDR = c(dados[i,"DR1"],dados[i,"DR2"]),
+#                      cABO = dados[i,"bg"],
+#                      abs = NULL)
+#   res
+# }
+# 
+# res
+# 
+# 
+# # criar tabela abs com um candidato por linha
+# tab.abs<-ex.abs %>% group_by(ID) %>% nest() %>% ungroup()
+# # juntar abs à tabela de candidatos
+# ex.candidates.pt<-ex.candidates.pt %>% left_join(tab.abs)
+# 
+# # testar num loop depois de juntar os abs
+# res<-NULL
+# 
+# dados<-as.data.frame(ex.candidates.pt)
+# 
+# for (i in 1:dim(ex.candidates.pt)[1]){
+#   res[i]<-donormatch(data = ex.donors,
+#                      cA = c(dados[i,"A1"],dados[i,"A2"]),
+#                      cB = c(dados[i,"B1"],dados[i,"B2"]),
+#                      cDR = c(dados[i,"DR1"],dados[i,"DR2"]),
+#                      cABO = dados[i,"bg"],
+#                      abs = as.data.frame(dados[i,"data"][[1]]) %>% .$abs)
+#   res
+# }
 
 
 

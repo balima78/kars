@@ -114,7 +114,7 @@ et_points<-function(iso = TRUE, # isogroup compatibility
                         cA = c(A1,A2), cB = c(B1,B2), cDR = c(DR1,DR2))["mmDR"],
            mmHLA = mmA + mmB + mmDR,
            mm000 = ifelse(mmA + mmB + mmDR == 0, 1, 0),
-           pointsDial = pt_dial(month = month, dial = dialysis),
+           pointsDial = et_dial(month = month, dial = dialysis),
            pointsETx = round(pointsHLA + pointsDial + MMP)) %>%  ungroup() %>%
     filter(compBlood == TRUE & (xm == FALSE | is.na(xm))) %>% 
     # mutate(pointsET = case_when(SP == 1 ~ dialysis,

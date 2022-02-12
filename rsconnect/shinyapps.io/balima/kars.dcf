@@ -5,7 +5,7 @@ account: balima
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2575268
-bundleId: 5334003
+bundleId: 5572927
 url: https://balima.shinyapps.io/kars/
-when: 1638796576.67719
-lastSyncTime: 1638796576.67719
+when: 1644697784.7944
+lastSyncTime: 1644697784.7944

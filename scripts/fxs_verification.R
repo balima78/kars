@@ -9,7 +9,9 @@ pt_mmHLA(dA = c("01","02"), dB = c("03","04"), dDR = c("10","11"),
 dt<-data.frame(dABO = sample(c("A","B","AB","O"),10, replace = T), 
                cABO = sample(c("A","B","AB","O"),10, replace = T))
 
-dt %>% rowwise() %>% mutate(comp = compABO(iso = F, dABO = dABO, cABO = cABO)) 
+dt %>% 
+  rowwise() %>% 
+  mutate(comp = compABO(iso = T, dABO = dABO, cABO = cABO)) 
 
 # example for pt_age function
 dt<-dt %>% mutate(dage = sample(c(65,50,35),10, replace = T),
