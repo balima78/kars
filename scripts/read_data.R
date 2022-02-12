@@ -6,11 +6,11 @@ library(tidyverse)
 # file example with HLA allele PT frequencies for MMP computation
 ex.candidates.pt <- read_csv2("files/candidates.csv")
 ex.candidates.pt<-ex.candidates.pt %>% 
-  mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character)
+  mutate_at(vars(ID, A1,A2,B1,B2,DR1,DR2),as.character)
 # file example with HLA allele ETKAS frequencies for MMP computation
 ex.candidates.et <- read_csv2("files/candidateset.csv")
 ex.candidates.et<-ex.candidates.et %>% 
-  mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character)
+  mutate_at(vars(ID, A1,A2,B1,B2,DR1,DR2),as.character)
 ## columns description
 # ID - candidates identification; type integer
 # bg - candidates' blood group; type character (A, AB, B, O)
@@ -30,7 +30,7 @@ ex.candidates.et<-ex.candidates.et %>%
 # file example for UK candidates
 ex.candidates.uk <- read_csv2("files/candidates.csv")
 ex.candidates.uk<-ex.candidates.uk %>% 
-  mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character) %>% select(!(a1:MMP))
+  mutate_at(vars(ID, A1,A2,B1,B2,DR1,DR2),as.character) %>% select(!(a1:MMP))
 
 # create random column with matchability score 
 set.seed(1)
@@ -57,6 +57,8 @@ ex.candidates.uk<-ex.candidates.uk %>%
 ## candidates HLA antibodies
 # file example
 ex.abs <- read_csv2("files/abs.csv")
+ex.abs<-ex.abs %>% 
+  mutate_at(vars(ID),as.character)
 ## columns description
 # ID - candidates identification; type integer
 # abs - candidates' HLA antibodies; type character (same resolution as defined for donors and candidates typing)
@@ -65,7 +67,7 @@ ex.abs <- read_csv2("files/abs.csv")
 # file example
 ex.donors <- read_csv2("files/donors.csv")
 ex.donors<-ex.donors %>% 
-  mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character)
+  mutate_at(vars(ID, A1,A2,B1,B2,DR1,DR2),as.character)
 ## columns description
 # ID - donors' identification; type integer
 # bg - donors' blood group; type character (A, AB, B, O)
