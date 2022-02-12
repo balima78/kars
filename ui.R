@@ -15,10 +15,10 @@ fluidPage(theme = shinytheme("spacelab"),
           titlePanel(a(href="http://bioestatisticas.wixsite.com/bioestatisticas", target="_blank",
                          img(src='ob.jpg', align = "right",height=60,width=150))),
           
-          a(href="https://transplants-open.netlify.app/index.html", target="_blank",
+          a(href="https://txor.netlify.app/", target="_blank",
             h1("Transplants Open Registry (TxOR)")),
           
-          navbarPage("KARS (version 0.0.1)",
+          navbarPage("KARS (version 0.1.0)",
                      tabPanel("Home", icon = icon("home"),
                               sidebarPanel(
                                 HTML('<p><img src="kidneys2.jpg" width=300 height=300></p>')
