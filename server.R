@@ -56,8 +56,7 @@ function(input, output, session) {
       )
     
     data %>% 
-      mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character) %>% 
-      mutate_at(vars(ID), as.numeric)
+      mutate_at(vars(ID, A1,A2,B1,B2,DR1,DR2),as.character) 
     
     
   })
@@ -89,8 +88,8 @@ function(input, output, session) {
     )
     
     data %>% 
-      mutate_at(vars(A1,A2,B1,B2,DR1,DR2),as.character) %>% 
-      mutate_at(vars(ID,age), as.numeric)
+      mutate_at(vars(ID,A1,A2,B1,B2,DR1,DR2),as.character) %>% 
+      mutate_at(vars(age), as.numeric)
     
   })
   
@@ -117,7 +116,7 @@ function(input, output, session) {
     )
     
     data %>% 
-      mutate_at(vars(ID), as.numeric)
+      mutate_at(vars(ID), as.character)
     
   })
   
@@ -238,14 +237,14 @@ function(input, output, session) {
     )
 
     # add a column to candidates' file to update respective donors
-    candidatesN<-candidates %>% mutate(donor = 0)
+    candidatesN<-candidates %>% mutate(donor = 'X') # donor column changed to character
     
     # create a list with the same length of the number of donors
     res <- vector("list", length = dim(donors)[1])
     
     # now the for loop
     for (i in 1:dim(donors)[1]){
-      candid<-candidatesN %>% filter(donor == 0)
+      candid<-candidatesN %>% filter(donor == 'X')
       
       res[[i]]<-pt_points(iso = iso, # ABO compatibility as selected 
                           dABO = donors$bg[i], # donor's blood group
@@ -479,14 +478,14 @@ function(input, output, session) {
       )
       
       # add a column to candidates' file to update respective donors
-      candidatesN<-candidates %>% mutate(donor = 0)
+      candidatesN<-candidates %>% mutate(donor = 'X')
       
       # create a list with the same length of the number of donors
       res <- vector("list", length = dim(donors)[1])
       
       # now the for loop
       for (i in 1:dim(donors)[1]){
-        candid<-candidatesN %>% filter(donor == 0)
+        candid<-candidatesN %>% filter(donor == 'X')
         
         res[[i]]<-et_points(iso = iso, # isogroup compatibility
                             dABO = donors$bg[i], # donor's blood group
@@ -660,14 +659,14 @@ function(input, output, session) {
                                         color = fct_relevel(color,"orange","yellow","green")
                                         )
       # add a column to candidates' file to update respective donors
-      candidatesN<-candidates %>% mutate(donor = 0)
+      candidatesN<-candidates %>% mutate(donor = 'X')
       
       # create a list with the same length of the number of donors
       res <- vector("list", length = dim(donors)[1])
       
       # now the for loop
       for (i in 1:dim(donors)[1]){
-        candid<-candidatesN %>% filter(donor == 0)
+        candid<-candidatesN %>% filter(donor == 'X')
         
         res[[i]]<-lima_order(iso = iso, # isogroup compatibility
                              dABO = donors$bg[i], # donor's blood group
@@ -846,7 +845,7 @@ function(input, output, session) {
                   mm23 = as.numeric(input$mm23UK), # substrating points for 2-3 mm 
                   mm46 = as.numeric(input$mm46UK), # substrating points for 4-6 mm
                   pts = input$bloodUK, # substrating points for B blood group
-                  df.abs = ex.abs, # data frame with candidates' HLA antibodies
+                  df.abs = abs.d, # data frame with candidates' HLA antibodies
                   n = 10 # slice first n rows
     )
 
@@ -900,14 +899,14 @@ function(input, output, session) {
       )
       
       # add a column to candidates' file to update respective donors
-      candidatesN<-candidates %>% mutate(donor = 0)
+      candidatesN<-candidates %>% mutate(donor = 'X')
       
       # create a list with the same length of the number of donors
       res <- vector("list", length = dim(donors)[1])
       
       # now the for loop
       for (i in 1:dim(donors)[1]){
-        candid<-candidatesN %>% filter(donor == 0)
+        candid<-candidatesN %>% filter(donor == 'X')
         
         res[[i]]<-uk_points(DRI = donors$DRI[i], # Donor RisK Index group
                             dABO = donors$bg[i], # donor's blood group
